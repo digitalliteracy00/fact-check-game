@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>팩트체크 수사대</title>
+
+<style>
+body{
+  font-family:Arial;
+  text-align:center;
+  background:#f5f6fa;
+}
+.screen{display:none;}
+button{
+  padding:12px 20px;
+  margin:8px;
+  font-size:16px;
+  cursor:pointer;
+}
+#score{font-size:20px;margin:10px;}
+#timer{font-size:20px;margin:10px;color:#ff4757;font-weight:bold;}
+.hint{display:none;margin:5px;}
+</style>
+</head>
+
+<body>
+
+<!-- 시작 화면 -->
+<div id="startScreen" class="screen" style="display:block;">
+  <h1>팩트체크 수사대</h1>
+  <h3>진짜 뉴스 vs 가짜 뉴스</h3>
+  <button onclick="startGame()">게임 시작</button>
+</div>
+
+<!-- 게임 화면 -->
+<div id="gameScreen" class="screen">
+  <div id="score">점수 : 0</div>
+  <div id="timer">남은 시간 : 60초</div>
+
+  <h2 id="title"></h2>
+  <p id="content"></p>
+
+  <button onclick="showHint(0)">단서1</button>
+  <button onclick="showHint(1)">단서2</button>
+  <button onclick="showHint(2)">단서3</button>
+
+  <div id="hints"></div>
+
+  <div id="judge" style="display:none;">
+    <button onclick="judge(true)">진짜</button>
+    <button onclick="judge(false)">가짜</button>
+  </div>
+</div>
+
+<!-- 엔딩 화면 -->
+<div id="endScreen" class="screen">
+  <h1>수사 종료</h1>
+  <h2 id="finalScore"></h2>
+  <h2 id="finalGrade"></h2>
+  <button onclick="location.reload()">다시 플레이</button>
+</div>
+
+<script>
+let score=0;
+let current=0;
+let timeLeft=60;
+let timer;
+
+// 사건 30개
+const cases=[
+{title:"하루 게임 5시간 하면 IQ 상승!",content:"모두가속아일보 김흥분 기자",hints:["이상한 매체","근거 없음","감정 표현"],answer:false},
+{title:"교육부 코딩교육 확대 발표",content:"정부 공식 발표",hints:["공식기관","객관 표현","광고 없음"],answer:true},
+{title:"이 젤리 먹으면 키 10cm 성장",content:"지금 구매!",hints:["광고","과장","근거 없음"],answer:false},
+{title:"서울시 미세먼지 감소 발표",content:"서울시 통계",hints:["출처 존재","통계","객관"],answer:true},
+{title:"외계인 학교 출몰!",content:"SNS 제보",hints:["출처 없음","자극 표현","증거 없음"],answer:false},
+{title:"WHO 손씻기 캠페인 발표",content:"공식 발표",hints:["기관","공익","객관"],answer:true},
+{title:"이 게임하면 시험 만점",content:"지금 다운로드",hints:["광고","과장","근거 없음"],answer:false},
+{title:"NASA 새 행성 발견",content:"공식 발표",hints:["기관","날짜","과학"],answer:true},
+{title:"물 많이 마시면 천재",content:"전문가 말",hints:["출처 없음","과장","연구 없음"],answer:false},
+{title:"독서 습관 집중력 향상",content:"대학 연구",hints:["연구","출처","객관"],answer:true},
+{title:"스마트폰 3시간 이상 수면 저하",content:"수면학회",hints:["연구","근거","객관"],answer:true},
+{title:"이 팔찌 면역력 300%",content:"SNS 광고",hints:["상품 홍보","과장","근거 없음"],answer:false},
+{title:"교육청 학교 안전 점검 강화",content:"보도자료",hints:["기관","날짜","정책"],answer:true},
+{title:"우주에서 온 돌 발견!",content:"익명 제보",hints:["출처 없음","증거 없음","자극"],answer:false},
+{title:"청소년 운동 감소 통계",content:"연구소 보고",hints:["통계","연구","객관"],answer:true},
+{title:"이 앱 설치하면 성적 상승",content:"설치 광고",hints:["광고","과장","근거 없음"],answer:false},
+{title:"환경부 플라스틱 감소 정책",content:"공식 자료",hints:["기관","정책","출처"],answer:true},
+{title:"외계 문명 은폐!",content:"커뮤니티",hints:["음모론","출처 없음","감정"],answer:false},
+{title:"독서량 감소 통계",content:"국립도서관",hints:["기관","통계","객관"],answer:true},
+{title:"헤드폰 집중력 5배",content:"제품 홍보",hints:["상품","과장","근거 없음"],answer:false},
+{title:"AI 학습 만족도 85%",content:"교육연구원",hints:["연구","통계","객관"],answer:true},
+{title:"이 비타민 감기 0%",content:"구매 링크",hints:["광고","과장","근거 없음"],answer:false},
+{title:"인터넷 사용 증가 통계",content:"통계청",hints:["기관","통계","객관"],answer:true},
+{title:"달 뒷면 도시 발견!",content:"블로그",hints:["출처 없음","증거 없음","자극"],answer:false},
+{title:"코딩교육 만족도 상승",content:"교육부",hints:["기관","통계","출처"],answer:true},
+{title:"이 신발 기록 2배",content:"쇼핑몰 후기",hints:["광고","과장","근거 없음"],answer:false},
+{title:"수면 부족 증가 연구",content:"의학 학회",hints:["연구","기관","근거"],answer:true},
+{title:"정부 비밀 로봇 투입",content:"SNS 루머",hints:["출처 없음","증거 없음","자극"],answer:false},
+{title:"친환경 급식 증가",content:"교육청 발표",hints:["기관","정책","출처"],answer:true},
+{title:"이 이어폰 영어 자동 습득",content:"광고 영상",hints:["광고","과장","근거 없음"],answer:false}
+];
+
+function startGame(){
+  document.getElementById("startScreen").style.display="none";
+  document.getElementById("gameScreen").style.display="block";
+  score=0; current=0; timeLeft=60;
+  startTimer();
+  loadCase();
+}
+
+function startTimer(){
+  timer=setInterval(()=>{
+    timeLeft--;
+    document.getElementById("timer").innerText="남은 시간 : "+timeLeft+"초";
+    if(timeLeft<=0) endGame();
+  },1000);
+}
+
+function loadCase(){
+  let c=cases[current];
+  document.getElementById("title").innerText=c.title;
+  document.getElementById("content").innerText=c.content;
+  document.getElementById("hints").innerHTML="";
+  document.getElementById("judge").style.display="none";
+}
+
+function showHint(i){
+  let hint=document.createElement("div");
+  hint.innerText=cases[current].hints[i];
+  document.getElementById("hints").appendChild(hint);
+  if(document.getElementById("hints").children.length>=3)
+    document.getElementById("judge").style.display="block";
+}
+
+function judge(choice){
+  if(choice===cases[current].answer) score+=20;
+  document.getElementById("score").innerText="점수 : "+score;
+  current++;
+  if(current>=cases.length) endGame();
+  else loadCase();
+}
+
+function endGame(){
+  clearInterval(timer);
+  document.getElementById("gameScreen").style.display="none";
+  document.getElementById("endScreen").style.display="block";
+  let grade="수사 인턴";
+  if(score>200) grade="정식 탐정";
+  if(score>350) grade="팩트체크 마스터";
+  document.getElementById("finalScore").innerText="최종 점수 : "+score;
+  document.getElementById("finalGrade").innerText="등급 : "+grade;
+}
+</script>
+
+</body>
+</html>
