@@ -1,156 +1,458 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<title>팩트체크 수사대</title>
 
 <style>
-body{
-  font-family:Arial;
-  text-align:center;
-  background:#f5f6fa;
-}
-.screen{display:none;}
-button{
-  padding:12px 20px;
-  margin:8px;
-  font-size:16px;
-  cursor:pointer;
-}
-#score{font-size:20px;margin:10px;}
-#timer{font-size:20px;margin:10px;color:#ff4757;font-weight:bold;}
-.hint{display:none;margin:5px;}
+*{box-sizing:border-box;margin:0;padding:0}
+#app{background:var(--color-background-tertiary);padding:16px;min-height:600px}
+.screen{display:none}.screen.active{display:block}
+.center{text-align:center}
+
+.start-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:580px;gap:14px}
+.logo{font-size:40px;font-weight:500;color:#6c63ff;line-height:1.1}
+.logo-sub{font-size:15px;color:var(--color-text-secondary)}
+.rank-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.rank-pill{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:50px;padding:6px 14px;font-size:12px;color:var(--color-text-secondary)}
+.start-btn{background:#6c63ff;color:#fff;border:none;padding:14px 44px;border-radius:50px;font-size:17px;font-weight:500;cursor:pointer;margin-top:6px}
+.start-btn:hover{background:#5a52d5}.start-btn:active{transform:scale(.97)}
+
+.ghdr{display:flex;justify-content:space-between;align-items:center;max-width:740px;margin:0 auto 12px;flex-wrap:wrap;gap:8px}
+.hbox{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:7px 14px;font-size:13px;color:var(--color-text-secondary)}
+.hval{font-size:17px;font-weight:500;color:var(--color-text-primary)}
+.lvbadge{background:#6c63ff;color:#fff;border-radius:50px;padding:5px 14px;font-size:12px;font-weight:500}
+
+.news-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:20px;max-width:740px;margin:0 auto 12px}
+.breaking{display:inline-block;background:#ff4757;color:#fff;font-size:11px;font-weight:500;padding:2px 8px;border-radius:4px;margin-bottom:10px}
+.ntitle{font-size:19px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px;line-height:1.4}
+.nbody{font-size:14px;color:var(--color-text-secondary);line-height:1.7;border-left:3px solid #6c63ff;padding-left:12px;margin-bottom:6px}
+.nmeta{font-size:11px;color:var(--color-text-tertiary)}
+
+.clue-section{max-width:740px;margin:0 auto 10px}
+.clue-sec-title{font-size:13px;color:var(--color-text-secondary);margin-bottom:8px;font-weight:500}
+
+.clue-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px;margin-bottom:10px}
+.clue-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.clue-icon{font-size:20px}
+.clue-name{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.clue-evidence{font-size:13px;color:var(--color-text-secondary);line-height:1.5;margin-bottom:12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px}
+.choices{display:flex;flex-wrap:wrap;gap:8px}
+.choice-btn{border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);border-radius:var(--border-radius-md);padding:8px 14px;font-size:13px;color:var(--color-text-primary);cursor:pointer;transition:background .12s,border-color .12s}
+.choice-btn:hover:not(:disabled){background:var(--color-background-secondary);border-color:#6c63ff}
+.choice-btn:disabled{cursor:default;opacity:.7}
+.choice-btn.selected-correct{background:#eafaf0;border-color:#2ed573;color:#176a3b;font-weight:500}
+.choice-btn.selected-wrong{background:#fff0f2;border-color:#ff6b81;color:#8b1a2a;font-weight:500}
+.choice-btn.reveal-correct{background:#eafaf0;border-color:#2ed573;color:#176a3b}
+.clue-feedback{font-size:12px;margin-top:8px;line-height:1.5;display:none}
+.clue-feedback.show{display:block}
+.clue-status{display:inline-block;padding:2px 8px;border-radius:50px;font-size:11px;font-weight:500;margin-right:6px}
+.st-ok{background:#eafaf0;color:#176a3b}.st-no{background:#fff0f2;color:#8b1a2a}.st-warn{background:#fff8ec;color:#7a5800}
+
+.evbar{max-width:740px;margin:0 auto 10px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 14px}
+.evrow{display:flex;align-items:center;gap:10px}
+.evlbl{font-size:12px;color:var(--color-text-secondary);white-space:nowrap}
+.evdots{display:flex;gap:5px;flex:1}
+.dot{width:20px;height:20px;border-radius:50%;border:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);transition:background .25s}
+.dot.ok{background:#2ed573;border-color:#2ed573}
+.dot.no{background:#ff6b81;border-color:#ff6b81}
+.evcnt{font-size:12px;color:var(--color-text-tertiary)}
+.evhint{font-size:12px;color:var(--color-text-secondary);margin-left:auto}
+.evhint.ready{color:#6c63ff;font-weight:500}
+
+.vbtns{max-width:740px;margin:0 auto 20px;display:flex;gap:12px;justify-content:center}
+.vbtn{flex:1;max-width:240px;padding:14px;border-radius:var(--border-radius-lg);font-size:15px;font-weight:500;border:2px solid transparent;cursor:pointer;transition:transform .1s,opacity .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.vbtn:disabled{opacity:.3;cursor:not-allowed}.vbtn:not(:disabled):active{transform:scale(.97)}
+.vbtn-real{background:#2ed573;color:#176a3b}.vbtn-real:not(:disabled):hover{background:#26c063}
+.vbtn-fake{background:#ff6b81;color:#8b1a2a}.vbtn-fake:not(:disabled):hover{background:#ff4f6a}
+
+.modal-wrap{min-height:420px;background:rgba(0,0,0,.42);display:flex;align-items:center;justify-content:center;border-radius:var(--border-radius-lg);margin:0 auto;max-width:740px}
+.modal{background:var(--color-background-primary);border-radius:16px;padding:28px;max-width:460px;width:90%;text-align:center}
+.res-emoji{font-size:52px;margin-bottom:10px}
+.res-title{font-size:22px;font-weight:500;margin-bottom:8px;color:var(--color-text-primary)}
+.res-msg{font-size:14px;color:var(--color-text-secondary);margin-bottom:14px;line-height:1.6;white-space:pre-line}
+.pts-row{display:inline-flex;gap:18px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 22px;margin-bottom:16px}
+.pt-item{text-align:center}
+.pt-val{font-size:19px;font-weight:500;color:var(--color-text-primary)}
+.pt-lbl{font-size:11px;color:var(--color-text-secondary)}
+.clue-score-row{font-size:13px;color:var(--color-text-secondary);margin-bottom:14px}
+.next-btn{background:#6c63ff;color:#fff;border:none;padding:13px 36px;border-radius:50px;font-size:15px;font-weight:500;cursor:pointer;width:100%}
+.next-btn:hover{background:#5a52d5}.next-btn:active{transform:scale(.97)}
+.lvup{background:#fffde7;border-radius:var(--border-radius-md);padding:8px 14px;font-size:13px;font-weight:500;color:#7a5800;margin-bottom:14px;display:none}
+
+.end-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:580px;gap:12px}
+.end-trophy{font-size:58px}
+.end-title{font-size:26px;font-weight:500;color:var(--color-text-primary)}
+.end-rank{font-size:18px;font-weight:500;color:#6c63ff}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:400px;width:100%}
+.sbox{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px;text-align:center}
+.sn{font-size:24px;font-weight:500;color:var(--color-text-primary)}
+.sl{font-size:11px;color:var(--color-text-secondary)}
+.end-bdg{background:#fffde7;border:0.5px solid #ffe082;border-radius:var(--border-radius-md);padding:10px 18px;font-size:13px;color:#7a5800;max-width:400px;width:100%;text-align:center}
+.retry-btn{background:#6c63ff;color:#fff;border:none;padding:13px 44px;border-radius:50px;font-size:15px;font-weight:500;cursor:pointer;margin-top:6px}
+.retry-btn:hover{background:#5a52d5}
 </style>
-</head>
 
-<body>
+<div id="app">
 
-<!-- 시작 화면 -->
-<div id="startScreen" class="screen" style="display:block;">
-  <h1>팩트체크 수사대</h1>
-  <h3>진짜 뉴스 vs 가짜 뉴스</h3>
-  <button onclick="startGame()">게임 시작</button>
-</div>
-
-<!-- 게임 화면 -->
-<div id="gameScreen" class="screen">
-  <div id="score">점수 : 0</div>
-  <div id="timer">남은 시간 : 60초</div>
-
-  <h2 id="title"></h2>
-  <p id="content"></p>
-
-  <button onclick="showHint(0)">단서1</button>
-  <button onclick="showHint(1)">단서2</button>
-  <button onclick="showHint(2)">단서3</button>
-
-  <div id="hints"></div>
-
-  <div id="judge" style="display:none;">
-    <button onclick="judge(true)">진짜</button>
-    <button onclick="judge(false)">가짜</button>
+<div id="ss" class="screen active">
+  <div class="start-wrap">
+    <div class="logo">🔍 팩트체크 수사대</div>
+    <div class="logo-sub">단서를 직접 분석하고, 가짜 뉴스를 잡아라!</div>
+    <div class="rank-row">
+      <span class="rank-pill">🪪 인턴 수사관</span>
+      <span class="rank-pill">🕵️ 정식 탐정</span>
+      <span class="rank-pill">🧠 분석 전문가</span>
+      <span class="rank-pill">👑 팩트체크 마스터</span>
+    </div>
+    <button class="start-btn" id="startBtn">🔍 수사 시작하기</button>
   </div>
 </div>
 
-<!-- 엔딩 화면 -->
-<div id="endScreen" class="screen">
-  <h1>수사 종료</h1>
-  <h2 id="finalScore"></h2>
-  <h2 id="finalGrade"></h2>
-  <button onclick="location.reload()">다시 플레이</button>
+<div id="gs" class="screen">
+  <div class="ghdr">
+    <div class="hbox">점수 <span class="hval" id="hScore">0</span></div>
+    <div class="lvbadge" id="hLv">🪪 인턴 수사관</div>
+    <div class="hbox">사건 <span class="hval" id="hCase">1</span>/<span id="hTotal">7</span></div>
+    <div class="hbox">단서 정답률 <span class="hval" id="hAcc">-</span></div>
+  </div>
+
+  <div class="news-card">
+    <div class="breaking">🚨 속보 입수</div>
+    <div class="ntitle" id="nTitle"></div>
+    <div class="nbody" id="nBody"></div>
+    <div class="nmeta" id="nMeta"></div>
+  </div>
+
+  <div class="clue-section">
+    <div class="clue-sec-title">🕵️ 각 단서를 분석하고 판정을 선택하세요 — 3개 이상 완료 시 판결 가능</div>
+    <div id="clueList"></div>
+  </div>
+
+  <div class="evbar">
+    <div class="evrow">
+      <span class="evlbl">진행</span>
+      <div class="evdots" id="evDots"></div>
+      <span class="evcnt" id="evCnt">0/7</span>
+      <span class="evhint" id="evHint">3개 이상 완료 후 판결 가능</span>
+    </div>
+  </div>
+
+  <div class="vbtns">
+    <button class="vbtn vbtn-real" id="btnReal" disabled>✅ 진짜 뉴스</button>
+    <button class="vbtn vbtn-fake" id="btnFake" disabled>❌ 가짜 뉴스</button>
+  </div>
+
+  <div id="modalWrap" style="display:none">
+    <div class="modal-wrap">
+      <div class="modal">
+        <div class="res-emoji" id="resEmoji"></div>
+        <div class="res-title" id="resTitle"></div>
+        <div class="res-msg" id="resMsg"></div>
+        <div class="lvup" id="lvUp"></div>
+        <div class="clue-score-row" id="clueScoreRow"></div>
+        <div class="pts-row">
+          <div class="pt-item"><div class="pt-val" id="resPts">+0</div><div class="pt-lbl">수사 포인트</div></div>
+          <div class="pt-item"><div class="pt-val" id="resXp">+0</div><div class="pt-lbl">경험치</div></div>
+        </div>
+        <button class="next-btn" id="nextBtn"></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="es" class="screen">
+  <div class="end-wrap">
+    <div class="end-trophy" id="eTrophy"></div>
+    <div class="end-title">수사 완료!</div>
+    <div class="end-rank" id="eRank"></div>
+    <div class="stats-grid">
+      <div class="sbox"><div class="sn" id="eSc">0</div><div class="sl">총 점수</div></div>
+      <div class="sbox"><div class="sn" id="eCorr">0</div><div class="sl">정답 사건</div></div>
+      <div class="sbox"><div class="sn" id="eAcc">0%</div><div class="sl">단서 정답률</div></div>
+    </div>
+    <div class="end-bdg" id="eBdg"></div>
+    <button class="retry-btn" onclick="init()">🔄 다시 수사하기</button>
+  </div>
+</div>
+
 </div>
 
 <script>
-let score=0;
-let current=0;
-let timeLeft=60;
-let timer;
-
-// 사건 30개
-const cases=[
-{title:"하루 게임 5시간 하면 IQ 상승!",content:"모두가속아일보 김흥분 기자",hints:["이상한 매체","근거 없음","감정 표현"],answer:false},
-{title:"교육부 코딩교육 확대 발표",content:"정부 공식 발표",hints:["공식기관","객관 표현","광고 없음"],answer:true},
-{title:"이 젤리 먹으면 키 10cm 성장",content:"지금 구매!",hints:["광고","과장","근거 없음"],answer:false},
-{title:"서울시 미세먼지 감소 발표",content:"서울시 통계",hints:["출처 존재","통계","객관"],answer:true},
-{title:"외계인 학교 출몰!",content:"SNS 제보",hints:["출처 없음","자극 표현","증거 없음"],answer:false},
-{title:"WHO 손씻기 캠페인 발표",content:"공식 발표",hints:["기관","공익","객관"],answer:true},
-{title:"이 게임하면 시험 만점",content:"지금 다운로드",hints:["광고","과장","근거 없음"],answer:false},
-{title:"NASA 새 행성 발견",content:"공식 발표",hints:["기관","날짜","과학"],answer:true},
-{title:"물 많이 마시면 천재",content:"전문가 말",hints:["출처 없음","과장","연구 없음"],answer:false},
-{title:"독서 습관 집중력 향상",content:"대학 연구",hints:["연구","출처","객관"],answer:true},
-{title:"스마트폰 3시간 이상 수면 저하",content:"수면학회",hints:["연구","근거","객관"],answer:true},
-{title:"이 팔찌 면역력 300%",content:"SNS 광고",hints:["상품 홍보","과장","근거 없음"],answer:false},
-{title:"교육청 학교 안전 점검 강화",content:"보도자료",hints:["기관","날짜","정책"],answer:true},
-{title:"우주에서 온 돌 발견!",content:"익명 제보",hints:["출처 없음","증거 없음","자극"],answer:false},
-{title:"청소년 운동 감소 통계",content:"연구소 보고",hints:["통계","연구","객관"],answer:true},
-{title:"이 앱 설치하면 성적 상승",content:"설치 광고",hints:["광고","과장","근거 없음"],answer:false},
-{title:"환경부 플라스틱 감소 정책",content:"공식 자료",hints:["기관","정책","출처"],answer:true},
-{title:"외계 문명 은폐!",content:"커뮤니티",hints:["음모론","출처 없음","감정"],answer:false},
-{title:"독서량 감소 통계",content:"국립도서관",hints:["기관","통계","객관"],answer:true},
-{title:"헤드폰 집중력 5배",content:"제품 홍보",hints:["상품","과장","근거 없음"],answer:false},
-{title:"AI 학습 만족도 85%",content:"교육연구원",hints:["연구","통계","객관"],answer:true},
-{title:"이 비타민 감기 0%",content:"구매 링크",hints:["광고","과장","근거 없음"],answer:false},
-{title:"인터넷 사용 증가 통계",content:"통계청",hints:["기관","통계","객관"],answer:true},
-{title:"달 뒷면 도시 발견!",content:"블로그",hints:["출처 없음","증거 없음","자극"],answer:false},
-{title:"코딩교육 만족도 상승",content:"교육부",hints:["기관","통계","출처"],answer:true},
-{title:"이 신발 기록 2배",content:"쇼핑몰 후기",hints:["광고","과장","근거 없음"],answer:false},
-{title:"수면 부족 증가 연구",content:"의학 학회",hints:["연구","기관","근거"],answer:true},
-{title:"정부 비밀 로봇 투입",content:"SNS 루머",hints:["출처 없음","증거 없음","자극"],answer:false},
-{title:"친환경 급식 증가",content:"교육청 발표",hints:["기관","정책","출처"],answer:true},
-{title:"이 이어폰 영어 자동 습득",content:"광고 영상",hints:["광고","과장","근거 없음"],answer:false}
+const CASES=[
+  {
+    title:"먹으면 키 10cm 커지는 초콜릿 등장! 전국 매진 임박!",
+    body:"최근 SNS에서 폭발적으로 공유되고 있는 글에 따르면, 특정 초콜릿 제품을 한 달만 먹어도 키가 10cm 성장한다는 주장이 나왔습니다. 이미 수십만 명이 구매했다고 하며, '재고 소진 직전'이라는 경고 문구와 함께 링크가 첨부되어 있습니다.",
+    meta:"출처: 건강소식SNS채널 | 날짜 없음",real:false,
+    explanation:"광고 목적의 가짜 건강 정보입니다. 출처·날짜·기자 이름이 없고 구매 유도 링크가 달려 있습니다.",
+    clues:[
+      {icon:"📰",name:"언론사 확인",evidence:"'건강소식SNS채널'이라는 매체에서 보도했습니다.",
+       choices:["✔️ 신뢰 매체","⚠️ 의심 매체","❌ 가짜 매체"],answer:2,
+       feedback:"SNS 채널은 언론사 등록이 없는 비공식 매체입니다. 신뢰하기 어렵습니다."},
+      {icon:"✍️",name:"기자 이름",evidence:"기사 어디에도 기자 이름이 표기되어 있지 않습니다.",
+       choices:["✔️ 실명 기자 확인","⚠️ 활동명만 있음","❌ 기자 이름 없음"],answer:2,
+       feedback:"신뢰할 수 있는 기사에는 보통 기자 실명이 있습니다. 익명 기사는 책임 소재가 불분명합니다."},
+      {icon:"📅",name:"날짜 확인",evidence:"기사 어디에도 작성 날짜가 표기되어 있지 않습니다.",
+       choices:["✔️ 정확한 날짜 있음","⚠️ 연월만 표기","❌ 날짜 없음"],answer:2,
+       feedback:"날짜가 없으면 정보가 최신인지, 오래된 내용인지 알 수 없습니다."},
+      {icon:"🧾",name:"출처 추적",evidence:"'SNS에서 공유된 글'이 유일한 출처입니다.",
+       choices:["✔️ 공식 기관 출처","⚠️ 개인 전문가 인용","❌ 출처 불명"],answer:2,
+       feedback:"전문 연구기관이나 공인된 출처가 없는 정보는 검증이 불가능합니다."},
+      {icon:"📊",name:"근거 자료",evidence:"'수십만 명이 구매했다'는 수치만 있고 연구 자료는 없습니다.",
+       choices:["✔️ 논문·통계 있음","⚠️ 후기·증언만 있음","❌ 근거 전혀 없음"],answer:1,
+       feedback:"구매 후기나 댓글은 과학적 근거가 될 수 없습니다. 임상 데이터나 논문이 필요합니다."},
+      {icon:"💰",name:"광고 의도",evidence:"'재고 소진 직전' 문구와 함께 구매 링크가 포함되어 있습니다.",
+       choices:["✔️ 광고 없음","⚠️ 간접 협찬","❌ 직접 구매 유도"],answer:2,
+       feedback:"정보 제공을 가장한 광고입니다. 판매 목적으로 과장된 효능을 주장하는 경우가 많습니다."},
+      {icon:"😱",name:"감정 조작",evidence:"'전국 매진 임박!'이라는 문구가 사용되었습니다.",
+       choices:["✔️ 중립적 표현","⚠️ 다소 과장된 표현","❌ 강한 감정 조작"],answer:2,
+       feedback:"조급함을 유발하는 표현은 독자가 냉정하게 판단하지 못하게 합니다. 전형적인 낚시 수법입니다."}
+    ]
+  },
+  {
+    title:"교육부, 2025년부터 AI 디지털교과서 초·중학교 시범 도입",
+    body:"교육부는 오늘 공식 브리핑을 통해 2025학년도 1학기부터 초등학교 3·4학년 및 중학교 1학년을 대상으로 AI 디지털교과서를 시범 운영한다고 발표했습니다. 연구보고서와 예산안이 함께 공개됐습니다.",
+    meta:"기자: 김지수 | 한국교육신문 | 2024.11.21",real:true,
+    explanation:"공식 발표·실명 기자·정확한 날짜·연구 근거가 모두 갖춰진 신뢰할 수 있는 보도입니다.",
+    clues:[
+      {icon:"📰",name:"언론사 확인",evidence:"'한국교육신문'에서 보도했습니다.",
+       choices:["✔️ 신뢰 매체","⚠️ 의심 매체","❌ 가짜 매체"],answer:0,
+       feedback:"한국교육신문은 교육 전문 등록 언론사로 신뢰할 수 있는 매체입니다."},
+      {icon:"✍️",name:"기자 이름",evidence:"'김지수 기자'로 실명이 기재되어 있습니다.",
+       choices:["✔️ 실명 기자 확인","⚠️ 활동명만 있음","❌ 기자 이름 없음"],answer:0,
+       feedback:"실명 기자가 확인되어 책임 소재가 명확합니다."},
+      {icon:"📅",name:"날짜 확인",evidence:"2024.11.21로 정확한 날짜가 기재되어 있습니다.",
+       choices:["✔️ 정확한 날짜 있음","⚠️ 연월만 표기","❌ 날짜 없음"],answer:0,
+       feedback:"명확한 날짜가 있어 정보의 최신성을 확인할 수 있습니다."},
+      {icon:"🧾",name:"출처 추적",evidence:"교육부 공식 브리핑 자료를 출처로 명시하고 있습니다.",
+       choices:["✔️ 공식 기관 출처","⚠️ 개인 전문가 인용","❌ 출처 불명"],answer:0,
+       feedback:"정부 부처의 공식 발표는 가장 신뢰도 높은 출처 중 하나입니다."},
+      {icon:"📊",name:"근거 자료",evidence:"연구보고서 및 예산안 공개 자료가 함께 인용되었습니다.",
+       choices:["✔️ 논문·통계 있음","⚠️ 후기·증언만 있음","❌ 근거 전혀 없음"],answer:0,
+       feedback:"공식 연구보고서와 예산안 자료는 검증 가능한 근거입니다."},
+      {icon:"💰",name:"광고 의도",evidence:"특정 제품이나 서비스를 구매하라는 내용이 없습니다.",
+       choices:["✔️ 광고 없음","⚠️ 간접 협찬","❌ 직접 구매 유도"],answer:0,
+       feedback:"광고나 판매 유도 요소가 없어 순수한 정보 전달 목적의 기사입니다."},
+      {icon:"😱",name:"감정 조작",evidence:"자극적 표현 없이 사실 위주로 서술되어 있습니다.",
+       choices:["✔️ 중립적 표현","⚠️ 다소 과장된 표현","❌ 강한 감정 조작"],answer:0,
+       feedback:"감정을 자극하는 표현 없이 사실만 전달하는 것이 신뢰 기사의 특징입니다."}
+    ]
+  },
+  {
+    title:"충격! 치약에 '형광증백제' 들어있다? 매일 독을 먹고 있는 건가요",
+    body:"최근 한 커뮤니티에서 '시중 치약 대부분에 세탁 시 사용하는 형광증백제 성분이 들어 있어 매일 몸속으로 흡수된다'는 글이 빠르게 공유되고 있습니다. 글에는 특정 '천연 치약' 구매 링크가 포함되어 있으며, '지금 당장 교체하지 않으면 위험합니다'라는 문구가 반복됩니다.",
+    meta:"출처: 맘카페 게시글 | 날짜 불명",real:false,
+    explanation:"공포심을 이용한 광고성 허위 건강 정보입니다. 치약의 형광증백제 주장은 사실 무근입니다.",
+    clues:[
+      {icon:"📰",name:"언론사 확인",evidence:"맘카페 익명 게시글에서 시작된 내용입니다.",
+       choices:["✔️ 신뢰 매체","⚠️ 의심 매체","❌ 가짜 매체"],answer:2,
+       feedback:"커뮤니티 익명 게시글은 언론사가 아닙니다. 사실 확인 없이 퍼지는 경우가 많습니다."},
+      {icon:"✍️",name:"기자 이름",evidence:"작성자 닉네임만 있고 실명은 없습니다.",
+       choices:["✔️ 실명 기자 확인","⚠️ 활동명만 있음","❌ 기자 이름 없음"],answer:1,
+       feedback:"닉네임만 있는 게시물은 책임 소재가 없어 허위 정보가 퍼지기 쉬운 환경입니다."},
+      {icon:"📅",name:"날짜 확인",evidence:"날짜가 '불명'으로 표기되어 있습니다.",
+       choices:["✔️ 정확한 날짜 있음","⚠️ 연월만 표기","❌ 날짜 없음"],answer:2,
+       feedback:"날짜가 없으면 오래된 허위 정보가 언제든 다시 퍼질 수 있습니다."},
+      {icon:"🧾",name:"출처 추적",evidence:"식약처나 학술기관 출처 없이 주장만 반복됩니다.",
+       choices:["✔️ 공식 기관 출처","⚠️ 개인 전문가 인용","❌ 출처 불명"],answer:2,
+       feedback:"식약처나 의료 전문기관이 검증한 내용이 아니면 건강 정보로 신뢰하기 어렵습니다."},
+      {icon:"📊",name:"근거 자료",evidence:"실험 데이터나 연구 없이 '들어있다'는 단언만 있습니다.",
+       choices:["✔️ 논문·통계 있음","⚠️ 후기·증언만 있음","❌ 근거 전혀 없음"],answer:2,
+       feedback:"단순 단언은 근거가 아닙니다. 과학적 검증 없이 사실처럼 주장하는 방식입니다."},
+      {icon:"💰",name:"광고 의도",evidence:"'천연 치약' 구매 링크가 직접 포함되어 있습니다.",
+       choices:["✔️ 광고 없음","⚠️ 간접 협찬","❌ 직접 구매 유도"],answer:2,
+       feedback:"정보를 가장해 특정 제품을 판매하는 전형적인 광고성 허위 정보입니다."},
+      {icon:"😱",name:"감정 조작",evidence:"'충격!', '매일 독을 먹고 있는 건가요', '지금 당장 교체하지 않으면 위험합니다'라는 표현이 사용됩니다.",
+       choices:["✔️ 중립적 표현","⚠️ 다소 과장된 표현","❌ 강한 감정 조작"],answer:2,
+       feedback:"공포심을 극도로 자극하는 표현들입니다. 독자가 이성적으로 판단하지 못하도록 유도합니다."}
+    ]
+  },
+  {
+    title:"2016년 폭염 때 에어컨 켜면 바이러스 확산? 다시 주목",
+    body:"2016년에 작성된 온라인 게시글이 최근 다시 공유되기 시작했습니다. '밀폐 공간에서 에어컨을 켜면 바이러스가 더 빨리 퍼진다'는 내용이며, 코로나19 유행 이후 다시 확산되었습니다. 작성자는 '한 의사'로만 표기되어 있습니다.",
+    meta:"출처: 네이버 카페 게시글 | 원본: 2016.07 | 재확산: 2024",real:false,
+    explanation:"오래된 정보를 맥락 없이 재활용한 사례입니다. 2016년 글이며, 작성자 신원도 확인 불가합니다.",
+    clues:[
+      {icon:"📰",name:"언론사 확인",evidence:"네이버 카페 개인 게시글입니다.",
+       choices:["✔️ 신뢰 매체","⚠️ 의심 매체","❌ 가짜 매체"],answer:2,
+       feedback:"네이버 카페는 누구나 글을 올릴 수 있는 공간으로 언론사가 아닙니다."},
+      {icon:"✍️",name:"기자 이름",evidence:"'한 의사'로만 표기되어 있습니다.",
+       choices:["✔️ 실명 기자 확인","⚠️ 활동명만 있음","❌ 기자 이름 없음"],answer:2,
+       feedback:"'한 의사'는 누구인지 확인이 불가능합니다. 익명은 신뢰 근거가 되지 않습니다."},
+      {icon:"📅",name:"날짜 확인",evidence:"원본은 2016년 글이고 2024년에 재확산된 것입니다.",
+       choices:["✔️ 정확한 날짜 있음","⚠️ 연월만 표기","❌ 날짜 없음"],answer:1,
+       feedback:"날짜는 있지만, 8년 된 정보를 새 정보인 것처럼 유통하는 것이 문제입니다."},
+      {icon:"🧾",name:"출처 추적",evidence:"학술·의료기관 출처가 없고 개인 게시글만 있습니다.",
+       choices:["✔️ 공식 기관 출처","⚠️ 개인 전문가 인용","❌ 출처 불명"],answer:2,
+       feedback:"의료 관련 정보는 반드시 공인된 기관의 검증이 필요합니다."},
+      {icon:"📊",name:"근거 자료",evidence:"데이터나 논문 없이 '확산된다'는 주장만 있습니다.",
+       choices:["✔️ 논문·통계 있음","⚠️ 후기·증언만 있음","❌ 근거 전혀 없음"],answer:2,
+       feedback:"주장만 있고 검증 가능한 근거가 전혀 없습니다."},
+      {icon:"💰",name:"광고 의도",evidence:"직접적인 광고는 없지만 클릭 유도용 제목입니다.",
+       choices:["✔️ 광고 없음","⚠️ 간접 협찬","❌ 직접 구매 유도"],answer:0,
+       feedback:"직접적인 광고는 없지만 클릭을 유도하는 낚시성 제목이 사용되었습니다."},
+      {icon:"😱",name:"감정 조작",evidence:"'다시 주목'이라는 표현으로 긴박감을 부여합니다.",
+       choices:["✔️ 중립적 표현","⚠️ 다소 과장된 표현","❌ 강한 감정 조작"],answer:1,
+       feedback:"'다시 주목'처럼 오래된 정보에 긴박감을 부여하는 것은 감정 조작의 한 형태입니다."}
+    ]
+  },
+  {
+    title:"WHO, 2025년 신종 독감 바이러스 주의보 발령",
+    body:"세계보건기구(WHO)는 공식 홈페이지 및 보도자료를 통해 동남아시아에서 H5N2형 조류독감 바이러스의 인체 감염 사례가 확인되었다고 발표했습니다. 한국 질병관리청도 이를 확인하고 감시 체계를 강화한다고 밝혔습니다.",
+    meta:"기자: 박준혁 | 연합뉴스 | 2025.01.15",real:true,
+    explanation:"WHO와 질병관리청의 공식 발표를 바탕으로 한 신뢰할 수 있는 공중보건 정보입니다.",
+    clues:[
+      {icon:"📰",name:"언론사 확인",evidence:"'연합뉴스'에서 보도했습니다.",
+       choices:["✔️ 신뢰 매체","⚠️ 의심 매체","❌ 가짜 매체"],answer:0,
+       feedback:"연합뉴스는 국가 공식 통신사로 가장 높은 신뢰도를 가진 언론사 중 하나입니다."},
+      {icon:"✍️",name:"기자 이름",evidence:"'박준혁 기자'로 실명이 기재되어 있습니다.",
+       choices:["✔️ 실명 기자 확인","⚠️ 활동명만 있음","❌ 기자 이름 없음"],answer:0,
+       feedback:"실명 기자가 확인됩니다. 책임 소재가 명확합니다."},
+      {icon:"📅",name:"날짜 확인",evidence:"2025.01.15로 명확한 날짜가 기재되어 있습니다.",
+       choices:["✔️ 정확한 날짜 있음","⚠️ 연월만 표기","❌ 날짜 없음"],answer:0,
+       feedback:"정확한 날짜가 있어 정보의 최신성을 확인할 수 있습니다."},
+      {icon:"🧾",name:"출처 추적",evidence:"WHO 공식 홈페이지, 보도자료, 질병관리청이 이중으로 확인했습니다.",
+       choices:["✔️ 공식 기관 출처","⚠️ 개인 전문가 인용","❌ 출처 불명"],answer:0,
+       feedback:"두 개의 공식 기관이 동시에 확인한 정보는 신뢰도가 매우 높습니다."},
+      {icon:"📊",name:"근거 자료",evidence:"인체 감염 사례 수, 지역, 바이러스 유형이 명시되어 있습니다.",
+       choices:["✔️ 논문·통계 있음","⚠️ 후기·증언만 있음","❌ 근거 전혀 없음"],answer:0,
+       feedback:"구체적인 수치와 바이러스 유형 명시는 검증 가능한 근거입니다."},
+      {icon:"💰",name:"광고 의도",evidence:"구매 유도나 제품 홍보 내용이 없습니다.",
+       choices:["✔️ 광고 없음","⚠️ 간접 협찬","❌ 직접 구매 유도"],answer:0,
+       feedback:"광고 요소가 전혀 없는 순수한 공중보건 정보 보도입니다."},
+      {icon:"😱",name:"감정 조작",evidence:"'주의보 발령'이라는 공식 용어가 사용되었습니다.",
+       choices:["✔️ 중립적 표현","⚠️ 다소 과장된 표현","❌ 강한 감정 조작"],answer:0,
+       feedback:"'주의보'는 공식 행정 용어입니다. 과장이 아닌 사실에 근거한 표현입니다."}
+    ]
+  }
 ];
 
-function startGame(){
-  document.getElementById("startScreen").style.display="none";
-  document.getElementById("gameScreen").style.display="block";
-  score=0; current=0; timeLeft=60;
-  startTimer();
-  loadCase();
+const RANKS=[{min:0,label:"🪪 인턴 수사관"},{min:3,label:"🕵️ 정식 탐정"},{min:7,label:"🧠 분석 전문가"},{min:15,label:"👑 팩트체크 마스터"}];
+function getRank(n){let r=RANKS[0];for(let x of RANKS)if(n>=x.min)r=x;return r;}
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+
+let S={};
+
+function init(){
+  S={score:0,xp:0,ci:0,correct:0,clueTotal:0,clueCorrect:0,solved:0};
+  show('ss');
 }
 
-function startTimer(){
-  timer=setInterval(()=>{
-    timeLeft--;
-    document.getElementById("timer").innerText="남은 시간 : "+timeLeft+"초";
-    if(timeLeft<=0) endGame();
-  },1000);
-}
+function startGame(){show('gs');loadCase();}
 
 function loadCase(){
-  let c=cases[current];
-  document.getElementById("title").innerText=c.title;
-  document.getElementById("content").innerText=c.content;
-  document.getElementById("hints").innerHTML="";
-  document.getElementById("judge").style.display="none";
+  const c=CASES[S.ci];
+  document.getElementById('nTitle').textContent=c.title;
+  document.getElementById('nBody').textContent=c.body;
+  document.getElementById('nMeta').textContent=c.meta;
+  document.getElementById('hCase').textContent=S.ci+1;
+  document.getElementById('hTotal').textContent=CASES.length;
+  document.getElementById('hScore').textContent=S.score;
+  document.getElementById('hLv').textContent=getRank(S.solved).label;
+  document.getElementById('hAcc').textContent=S.clueTotal>0?Math.round(S.clueCorrect/S.clueTotal*100)+'%':'-';
+  document.getElementById('modalWrap').style.display='none';
+  document.getElementById('btnReal').disabled=true;
+  document.getElementById('btnFake').disabled=true;
+  S.doneClues=0;S.clueAnswers=new Array(7).fill(null);
+
+  const dots=document.getElementById('evDots');
+  dots.innerHTML='';
+  for(let i=0;i<7;i++){const d=document.createElement('div');d.className='dot';d.id='dot'+i;dots.appendChild(d);}
+  document.getElementById('evCnt').textContent='0/7';
+  document.getElementById('evHint').textContent='3개 이상 완료 후 판결 가능';
+  document.getElementById('evHint').classList.remove('ready');
+
+  const list=document.getElementById('clueList');
+  list.innerHTML='';
+  c.clues.forEach((cl,i)=>{
+    const card=document.createElement('div');
+    card.className='clue-card';
+    card.id='clue-card-'+i;
+    const choicesHtml=cl.choices.map((ch,j)=>`<button class="choice-btn" onclick="pickClue(${i},${j})">${ch}</button>`).join('');
+    card.innerHTML=`<div class="clue-header"><div class="clue-icon">${cl.icon}</div><div class="clue-name">${cl.name}</div></div><div class="clue-evidence">${cl.evidence}</div><div class="choices" id="choices-${i}">${choicesHtml}</div><div class="clue-feedback" id="fb-${i}"></div>`;
+    list.appendChild(card);
+  });
 }
 
-function showHint(i){
-  let hint=document.createElement("div");
-  hint.innerText=cases[current].hints[i];
-  document.getElementById("hints").appendChild(hint);
-  if(document.getElementById("hints").children.length>=3)
-    document.getElementById("judge").style.display="block";
+function pickClue(ci,chosen){
+  const c=CASES[S.ci];
+  const cl=c.clues[ci];
+  if(S.clueAnswers[ci]!==null)return;
+  S.clueAnswers[ci]=chosen;
+  const correct=chosen===cl.answer;
+  S.clueTotal++;
+  if(correct)S.clueCorrect++;
+
+  const choicesEl=document.getElementById('choices-'+ci);
+  Array.from(choicesEl.children).forEach((btn,j)=>{
+    btn.disabled=true;
+    if(j===chosen){
+      btn.classList.add(correct?'selected-correct':'selected-wrong');
+    }
+    if(j===cl.answer&&!correct){
+      btn.classList.add('reveal-correct');
+    }
+  });
+
+  const fb=document.getElementById('fb-'+ci);
+  const tag=correct?`<span class="clue-status st-ok">✔ 정확한 분석!</span>`:`<span class="clue-status st-no">✗ 다시 생각해봐요</span>`;
+  fb.innerHTML=tag+cl.feedback;
+  fb.classList.add('show');
+
+  S.doneClues++;
+  const dot=document.getElementById('dot'+( S.doneClues-1));
+  if(dot){dot.classList.add(correct?'ok':'no');}
+  document.getElementById('evCnt').textContent=S.doneClues+'/7';
+  document.getElementById('hAcc').textContent=Math.round(S.clueCorrect/S.clueTotal*100)+'%';
+
+  if(S.doneClues>=3){
+    document.getElementById('btnReal').disabled=false;
+    document.getElementById('btnFake').disabled=false;
+    document.getElementById('evHint').textContent='⚖️ 판결 준비 완료!';
+    document.getElementById('evHint').classList.add('ready');
+  }
 }
 
-function judge(choice){
-  if(choice===cases[current].answer) score+=20;
-  document.getElementById("score").innerText="점수 : "+score;
-  current++;
-  if(current>=cases.length) endGame();
-  else loadCase();
+function verdict(isReal){
+  const c=CASES[S.ci];
+  const hit=isReal===c.real;
+  const clueBonus=S.clueCorrect;
+  const pts=hit?(80+clueBonus*10):0;
+  const xpGain=hit?50:10;
+  S.score+=pts;S.xp+=xpGain;
+  if(hit){S.correct++;S.solved++;}
+
+  const prevRank=getRank(S.solved-(hit?1:0)).label;
+  const newRank=getRank(S.solved).label;
+  const lvup=hit&&prevRank!==newRank&&S.ci>0;
+
+  document.getElementById('resEmoji').textContent=hit?'🎉':'🚨';
+  document.getElementById('resTitle').textContent=hit?'사건 해결 성공!':'수사 실패!';
+  document.getElementById('resMsg').textContent=(hit?'잘 분석했어요!\n':'아쉽게 틀렸어요.\n')+c.explanation;
+  document.getElementById('clueScoreRow').textContent='단서 정답: '+S.clueCorrect+'/'+S.doneClues+'개 (보너스 점수 +'+S.clueCorrect*10+'점 포함)';
+  document.getElementById('resPts').textContent='+'+pts;
+  document.getElementById('resXp').textContent='+'+xpGain;
+
+  const lv=document.getElementById('lvUp');
+  if(lvup){lv.textContent='🎊 레벨 업! '+newRank+' 로 승급!';lv.style.display='block';}
+  else lv.style.display='none';
+
+  const nb=document.getElementById('nextBtn');
+  if(S.ci+1>=CASES.length){nb.textContent='🏆 결과 보기';nb.onclick=showEnd;}
+  else{nb.textContent='다음 사건 →';nb.onclick=()=>{S.ci++;loadCase();};}
+
+  document.getElementById('modalWrap').style.display='block';
 }
 
-function endGame(){
-  clearInterval(timer);
-  document.getElementById("gameScreen").style.display="none";
-  document.getElementById("endScreen").style.display="block";
-  let grade="수사 인턴";
-  if(score>200) grade="정식 탐정";
-  if(score>350) grade="팩트체크 마스터";
-  document.getElementById("finalScore").innerText="최종 점수 : "+score;
-  document.getElementById("finalGrade").innerText="등급 : "+grade;
+function showEnd(){
+  show('es');
+  const rank=getRank(S.solved);
+  document.getElementById('eTrophy').textContent=S.solved>=CASES.length*0.8?'🏆':S.solved>=CASES.length*0.5?'🥈':'🥉';
+  document.getElementById('eRank').textContent=rank.label;
+  document.getElementById('eSc').textContent=S.score;
+  document.getElementById('eCorr').textContent=S.correct+'/'+CASES.length;
+  document.getElementById('eAcc').textContent=Math.round(S.clueCorrect/S.clueTotal*100)+'%';
+  const bdgs=['모든 단서를 꼼꼼히 분석하는 진짜 수사관!','증거 기반 추리로 허위 정보를 잡아냈어요!','팩트체크 능력 +1 획득!'];
+  document.getElementById('eBdg').textContent='🏅 '+bdgs[Math.floor(Math.random()*bdgs.length)];
 }
+
+document.getElementById('startBtn').onclick=startGame;
+document.getElementById('btnReal').onclick=()=>verdict(true);
+document.getElementById('btnFake').onclick=()=>verdict(false);
+init();
 </script>
-
-</body>
-</html>
