@@ -1,135 +1,222 @@
-
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>팩트체크 수사대</title>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&family=Nanum+Gothic+Coding&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-#app{background:var(--color-background-tertiary);padding:16px;min-height:600px}
-.screen{display:none}.screen.active{display:block}
-.center{text-align:center}
+:root{
+  --purple:#6c63ff;--purple-light:#ede9ff;--purple-dark:#4a44b5;
+  --green:#22c55e;--green-light:#dcfce7;--green-dark:#15803d;
+  --red:#ef4444;--red-light:#fee2e2;--red-dark:#b91c1c;
+  --amber:#f59e0b;--amber-light:#fef3c7;--amber-dark:#b45309;
+  --gray:#6b7280;--gray-light:#f3f4f6;--gray-dark:#1f2937;
+  --bg:#f0f0ff;--card:#fff;--text:#1e1b4b;--text2:#6366f1;
+  --radius:14px;--radius-lg:20px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Nanum Gothic',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.6}
+.screen{display:none}
+.screen.active{display:block}
 
-.start-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:580px;gap:14px}
-.logo{font-size:40px;font-weight:500;color:#6c63ff;line-height:1.1}
-.logo-sub{font-size:15px;color:var(--color-text-secondary)}
-.rank-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
-.rank-pill{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:50px;padding:6px 14px;font-size:12px;color:var(--color-text-secondary)}
-.start-btn{background:#6c63ff;color:#fff;border:none;padding:14px 44px;border-radius:50px;font-size:17px;font-weight:500;cursor:pointer;margin-top:6px}
-.start-btn:hover{background:#5a52d5}.start-btn:active{transform:scale(.97)}
+/* ── START ── */
+#start-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
+.logo-wrap{margin-bottom:24px}
+.logo-icon{font-size:56px;display:block;margin-bottom:8px}
+.logo-title{font-size:30px;font-weight:800;color:var(--purple);letter-spacing:-1px}
+.logo-sub{font-size:15px;color:var(--gray);margin-top:4px}
+.stages-preview{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;width:100%;max-width:480px;margin:24px auto}
+.stage-pill{background:var(--card);border:1.5px solid #e0deff;border-radius:var(--radius);padding:14px 16px;text-align:left}
+.stage-pill .s-icon{font-size:22px;margin-bottom:4px}
+.stage-pill .s-name{font-size:13px;font-weight:700;color:var(--purple)}
+.stage-pill .s-desc{font-size:11px;color:var(--gray);margin-top:2px}
+.stage-pill.locked{opacity:.45;filter:grayscale(.5)}
+.btn-start{background:var(--purple);color:#fff;border:none;border-radius:50px;padding:16px 48px;font-size:17px;font-weight:800;cursor:pointer;font-family:'Nanum Gothic',sans-serif;margin-top:8px;width:100%;max-width:300px;transition:background .15s,transform .1s}
+.btn-start:hover{background:var(--purple-dark)}
+.btn-start:active{transform:scale(.97)}
 
-.ghdr{display:flex;justify-content:space-between;align-items:center;max-width:740px;margin:0 auto 12px;flex-wrap:wrap;gap:8px}
-.hbox{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:7px 14px;font-size:13px;color:var(--color-text-secondary)}
-.hval{font-size:17px;font-weight:500;color:var(--color-text-primary)}
-.lvbadge{background:#6c63ff;color:#fff;border-radius:50px;padding:5px 14px;font-size:12px;font-weight:500}
+/* ── STAGE INTRO ── */
+#intro-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
+.intro-badge{display:inline-block;background:var(--purple-light);color:var(--purple-dark);border-radius:50px;padding:6px 18px;font-size:13px;font-weight:700;margin-bottom:16px}
+.intro-title{font-size:26px;font-weight:800;color:var(--purple);margin-bottom:8px}
+.intro-desc{font-size:15px;color:var(--gray-dark);max-width:440px;margin:0 auto 20px;line-height:1.7}
+.intro-rules{background:var(--card);border-radius:var(--radius-lg);padding:20px;max-width:440px;width:100%;margin:0 auto 24px;border:1.5px solid #e0deff;text-align:left}
+.intro-rules .rule{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:14px}
+.intro-rules .rule:last-child{margin-bottom:0}
+.intro-rules .rule-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.pass-notice{background:var(--amber-light);border-radius:var(--radius);padding:12px 16px;max-width:440px;width:100%;margin:0 auto 20px;font-size:13px;color:var(--amber-dark);font-weight:700;text-align:center}
 
-.news-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:20px;max-width:740px;margin:0 auto 12px}
-.breaking{display:inline-block;background:#ff4757;color:#fff;font-size:11px;font-weight:500;padding:2px 8px;border-radius:4px;margin-bottom:10px}
-.ntitle{font-size:19px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px;line-height:1.4}
-.nbody{font-size:14px;color:var(--color-text-secondary);line-height:1.7;border-left:3px solid #6c63ff;padding-left:12px;margin-bottom:6px}
-.nmeta{font-size:11px;color:var(--color-text-tertiary)}
+/* ── GAME ── */
+#game-screen{padding:16px;max-width:780px;margin:0 auto}
+.game-hdr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.hdr-left{display:flex;align-items:center;gap:10px}
+.stage-tag{background:var(--purple);color:#fff;border-radius:50px;padding:5px 14px;font-size:12px;font-weight:700}
+.case-info{font-size:13px;color:var(--gray)}
+.hdr-right{display:flex;gap:8px}
+.hdr-box{background:var(--card);border:1px solid #e0deff;border-radius:var(--radius);padding:6px 12px;text-align:center;min-width:64px}
+.hdr-box .hv{font-size:16px;font-weight:800;color:var(--purple)}
+.hdr-box .hl{font-size:10px;color:var(--gray)}
 
-.clue-section{max-width:740px;margin:0 auto 10px}
-.clue-sec-title{font-size:13px;color:var(--color-text-secondary);margin-bottom:8px;font-weight:500}
+.news-card{background:var(--card);border-radius:var(--radius-lg);padding:18px 20px;border:1.5px solid #e0deff;margin-bottom:14px;position:relative}
+.breaking-tag{display:inline-block;background:var(--red);color:#fff;border-radius:6px;padding:3px 9px;font-size:11px;font-weight:700;margin-bottom:10px}
+.news-title{font-size:18px;font-weight:800;color:var(--text);line-height:1.4;margin-bottom:10px}
+.news-body{font-size:14px;color:#374151;line-height:1.75;border-left:3px solid var(--purple);padding-left:13px;margin-bottom:8px}
+.news-meta{font-size:11px;color:var(--gray)}
 
-.clue-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px;margin-bottom:10px}
-.clue-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.clue-icon{font-size:20px}
-.clue-name{font-size:14px;font-weight:500;color:var(--color-text-primary)}
-.clue-evidence{font-size:13px;color:var(--color-text-secondary);line-height:1.5;margin-bottom:12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px}
-.choices{display:flex;flex-wrap:wrap;gap:8px}
-.choice-btn{border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);border-radius:var(--border-radius-md);padding:8px 14px;font-size:13px;color:var(--color-text-primary);cursor:pointer;transition:background .12s,border-color .12s}
-.choice-btn:hover:not(:disabled){background:var(--color-background-secondary);border-color:#6c63ff}
-.choice-btn:disabled{cursor:default;opacity:.7}
-.choice-btn.selected-correct{background:#eafaf0;border-color:#2ed573;color:#176a3b;font-weight:500}
-.choice-btn.selected-wrong{background:#fff0f2;border-color:#ff6b81;color:#8b1a2a;font-weight:500}
-.choice-btn.reveal-correct{background:#eafaf0;border-color:#2ed573;color:#176a3b}
-.clue-feedback{font-size:12px;margin-top:8px;line-height:1.5;display:none}
-.clue-feedback.show{display:block}
-.clue-status{display:inline-block;padding:2px 8px;border-radius:50px;font-size:11px;font-weight:500;margin-right:6px}
-.st-ok{background:#eafaf0;color:#176a3b}.st-no{background:#fff0f2;color:#8b1a2a}.st-warn{background:#fff8ec;color:#7a5800}
+.clue-sec-title{font-size:13px;color:var(--gray);font-weight:700;margin-bottom:10px}
+.clue-card{background:var(--card);border-radius:var(--radius);border:1.5px solid #e8e8f0;padding:14px 16px;margin-bottom:10px;transition:border-color .2s}
+.clue-card.answered{border-color:#c7d2fe}
+.clue-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.clue-ico{font-size:19px}
+.clue-name{font-size:13px;font-weight:700;color:var(--text)}
+.clue-ev{font-size:13px;color:#374151;background:#f5f3ff;border-radius:8px;padding:9px 12px;margin-bottom:11px;line-height:1.6}
+.choices{display:flex;flex-wrap:wrap;gap:7px}
+.choice{border:1.5px solid #c7d2fe;background:var(--card);border-radius:var(--radius);padding:8px 13px;font-size:13px;color:var(--text);cursor:pointer;font-family:'Nanum Gothic',sans-serif;transition:background .12s,border-color .12s;line-height:1.4}
+.choice:hover:not(:disabled){background:#f5f3ff;border-color:var(--purple)}
+.choice:disabled{cursor:default}
+.choice.c-ok{background:var(--green-light);border-color:var(--green);color:var(--green-dark);font-weight:700}
+.choice.c-no{background:var(--red-light);border-color:var(--red);color:var(--red-dark);font-weight:700}
+.choice.c-show{background:var(--green-light);border-color:var(--green);color:var(--green-dark)}
+.clue-fb{font-size:12px;margin-top:9px;display:none;line-height:1.6;padding:8px 11px;border-radius:8px}
+.clue-fb.show{display:block}
+.clue-fb.fb-ok{background:var(--green-light);color:var(--green-dark)}
+.clue-fb.fb-no{background:var(--red-light);color:var(--red-dark)}
 
-.evbar{max-width:740px;margin:0 auto 10px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 14px}
-.evrow{display:flex;align-items:center;gap:10px}
-.evlbl{font-size:12px;color:var(--color-text-secondary);white-space:nowrap}
-.evdots{display:flex;gap:5px;flex:1}
-.dot{width:20px;height:20px;border-radius:50%;border:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);transition:background .25s}
-.dot.ok{background:#2ed573;border-color:#2ed573}
-.dot.no{background:#ff6b81;border-color:#ff6b81}
-.evcnt{font-size:12px;color:var(--color-text-tertiary)}
-.evhint{font-size:12px;color:var(--color-text-secondary);margin-left:auto}
-.evhint.ready{color:#6c63ff;font-weight:500}
+.ev-bar{background:var(--card);border:1px solid #e0deff;border-radius:var(--radius);padding:10px 14px;margin-bottom:12px}
+.ev-row{display:flex;align-items:center;gap:10px}
+.ev-lbl{font-size:12px;color:var(--gray);white-space:nowrap;font-weight:700}
+.ev-dots{display:flex;gap:5px;flex:1}
+.dot{width:22px;height:22px;border-radius:50%;border:1.5px solid #d1d5db;background:#f3f4f6;transition:background .2s,border-color .2s}
+.dot.d-ok{background:var(--green);border-color:var(--green)}
+.dot.d-no{background:var(--red);border-color:var(--red)}
+.ev-cnt{font-size:12px;color:var(--gray);font-weight:700}
+.ev-hint{font-size:12px;color:var(--gray);margin-left:auto;text-align:right}
+.ev-hint.ready{color:var(--purple);font-weight:700}
 
-.vbtns{max-width:740px;margin:0 auto 20px;display:flex;gap:12px;justify-content:center}
-.vbtn{flex:1;max-width:240px;padding:14px;border-radius:var(--border-radius-lg);font-size:15px;font-weight:500;border:2px solid transparent;cursor:pointer;transition:transform .1s,opacity .2s;display:flex;align-items:center;justify-content:center;gap:8px}
-.vbtn:disabled{opacity:.3;cursor:not-allowed}.vbtn:not(:disabled):active{transform:scale(.97)}
-.vbtn-real{background:#2ed573;color:#176a3b}.vbtn-real:not(:disabled):hover{background:#26c063}
-.vbtn-fake{background:#ff6b81;color:#8b1a2a}.vbtn-fake:not(:disabled):hover{background:#ff4f6a}
+.vbtns{display:flex;gap:12px;margin-bottom:24px}
+.vbtn{flex:1;padding:15px;border-radius:var(--radius);font-size:15px;font-weight:800;border:none;cursor:pointer;font-family:'Nanum Gothic',sans-serif;transition:transform .1s,opacity .15s}
+.vbtn:disabled{opacity:.3;cursor:not-allowed}
+.vbtn:not(:disabled):active{transform:scale(.97)}
+.vbtn-real{background:var(--green);color:#fff}
+.vbtn-real:not(:disabled):hover{background:var(--green-dark)}
+.vbtn-fake{background:var(--red);color:#fff}
+.vbtn-fake:not(:disabled):hover{background:var(--red-dark)}
 
-.modal-wrap{min-height:420px;background:rgba(0,0,0,.42);display:flex;align-items:center;justify-content:center;border-radius:var(--border-radius-lg);margin:0 auto;max-width:740px}
-.modal{background:var(--color-background-primary);border-radius:16px;padding:28px;max-width:460px;width:90%;text-align:center}
-.res-emoji{font-size:52px;margin-bottom:10px}
-.res-title{font-size:22px;font-weight:500;margin-bottom:8px;color:var(--color-text-primary)}
-.res-msg{font-size:14px;color:var(--color-text-secondary);margin-bottom:14px;line-height:1.6;white-space:pre-line}
-.pts-row{display:inline-flex;gap:18px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 22px;margin-bottom:16px}
-.pt-item{text-align:center}
-.pt-val{font-size:19px;font-weight:500;color:var(--color-text-primary)}
-.pt-lbl{font-size:11px;color:var(--color-text-secondary)}
-.clue-score-row{font-size:13px;color:var(--color-text-secondary);margin-bottom:14px}
-.next-btn{background:#6c63ff;color:#fff;border:none;padding:13px 36px;border-radius:50px;font-size:15px;font-weight:500;cursor:pointer;width:100%}
-.next-btn:hover{background:#5a52d5}.next-btn:active{transform:scale(.97)}
-.lvup{background:#fffde7;border-radius:var(--border-radius-md);padding:8px 14px;font-size:13px;font-weight:500;color:#7a5800;margin-bottom:14px;display:none}
+/* ── POPUP ── */
+.popup-bg{display:none;position:absolute;top:0;left:0;width:100%;background:rgba(30,27,75,.5);z-index:100;align-items:flex-start;justify-content:center;padding:40px 16px}
+.popup-bg.open{display:flex}
+.popup{background:var(--card);border-radius:var(--radius-lg);padding:28px 24px;max-width:440px;width:100%;text-align:center;border:2px solid #e0deff;animation:pop .22s ease}
+@keyframes pop{from{transform:scale(.86);opacity:0}to{transform:scale(1);opacity:1}}
+.pop-icon{font-size:52px;margin-bottom:10px}
+.pop-title{font-size:22px;font-weight:800;color:var(--text);margin-bottom:8px}
+.pop-explain{font-size:14px;color:#374151;line-height:1.7;margin-bottom:14px;background:#f5f3ff;border-radius:var(--radius);padding:12px 14px;text-align:left}
+.pop-explain .ex-label{font-size:11px;font-weight:700;color:var(--purple);margin-bottom:4px}
+.pop-scores{display:flex;gap:10px;justify-content:center;margin-bottom:14px}
+.pop-sc{background:#f5f3ff;border-radius:var(--radius);padding:10px 18px;text-align:center}
+.pop-sc .sv{font-size:20px;font-weight:800;color:var(--purple)}
+.pop-sc .sl{font-size:11px;color:var(--gray)}
+.pop-clue{font-size:13px;color:var(--gray);margin-bottom:16px}
+.lvup-banner{background:var(--amber-light);border-radius:var(--radius);padding:10px 14px;font-size:14px;font-weight:800;color:var(--amber-dark);margin-bottom:14px;display:none}
+.pop-next{background:var(--purple);color:#fff;border:none;border-radius:50px;padding:14px 36px;font-size:15px;font-weight:800;cursor:pointer;font-family:'Nanum Gothic',sans-serif;width:100%;transition:background .15s}
+.pop-next:hover{background:var(--purple-dark)}
 
-.end-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:580px;gap:12px}
-.end-trophy{font-size:58px}
-.end-title{font-size:26px;font-weight:500;color:var(--color-text-primary)}
-.end-rank{font-size:18px;font-weight:500;color:#6c63ff}
-.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:400px;width:100%}
-.sbox{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px;text-align:center}
-.sn{font-size:24px;font-weight:500;color:var(--color-text-primary)}
-.sl{font-size:11px;color:var(--color-text-secondary)}
-.end-bdg{background:#fffde7;border:0.5px solid #ffe082;border-radius:var(--border-radius-md);padding:10px 18px;font-size:13px;color:#7a5800;max-width:400px;width:100%;text-align:center}
-.retry-btn{background:#6c63ff;color:#fff;border:none;padding:13px 44px;border-radius:50px;font-size:15px;font-weight:500;cursor:pointer;margin-top:6px}
-.retry-btn:hover{background:#5a52d5}
+/* ── STAGE RESULT ── */
+#stage-result-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
+.sr-icon{font-size:64px;margin-bottom:14px}
+.sr-title{font-size:26px;font-weight:800;margin-bottom:8px}
+.sr-sub{font-size:15px;color:var(--gray);margin-bottom:20px}
+.sr-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:380px;width:100%;margin:0 auto 20px}
+.sr-stat{background:var(--card);border:1.5px solid #e0deff;border-radius:var(--radius);padding:12px 8px;text-align:center}
+.sr-stat .sv{font-size:22px;font-weight:800;color:var(--purple)}
+.sr-stat .sl{font-size:11px;color:var(--gray)}
+.fail-msg{background:var(--red-light);border-radius:var(--radius);padding:14px 16px;max-width:440px;width:100%;margin:0 auto 20px;font-size:14px;color:var(--red-dark);font-weight:700}
+.pass-msg{background:var(--green-light);border-radius:var(--radius);padding:14px 16px;max-width:440px;width:100%;margin:0 auto 20px;font-size:14px;color:var(--green-dark);font-weight:700}
+.sr-btn{background:var(--purple);color:#fff;border:none;border-radius:50px;padding:15px 44px;font-size:16px;font-weight:800;cursor:pointer;font-family:'Nanum Gothic',sans-serif;margin:4px;transition:background .15s}
+.sr-btn:hover{background:var(--purple-dark)}
+.sr-btn.btn-retry{background:var(--gray);margin-top:4px}
+.sr-btn.btn-retry:hover{background:#374151}
+
+/* ── FINAL END ── */
+#end-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
+.end-trophy{font-size:72px;margin-bottom:14px}
+.end-title{font-size:28px;font-weight:800;color:var(--purple);margin-bottom:6px}
+.end-rank{font-size:18px;font-weight:700;color:var(--purple);margin-bottom:20px}
+.end-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-width:340px;width:100%;margin:0 auto 20px}
+.end-stat{background:var(--card);border:1.5px solid #e0deff;border-radius:var(--radius);padding:14px;text-align:center}
+.end-stat .sv{font-size:24px;font-weight:800;color:var(--purple)}
+.end-stat .sl{font-size:12px;color:var(--gray)}
+.end-badge{background:var(--amber-light);border:1.5px solid #fcd34d;border-radius:var(--radius);padding:12px 18px;font-size:14px;color:var(--amber-dark);font-weight:700;max-width:380px;width:100%;margin:0 auto 20px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:540px){
+  .news-title{font-size:16px}
+  .game-hdr{flex-direction:column;align-items:flex-start}
+  .hdr-right{width:100%}
+  .hdr-box{flex:1}
+  .vbtns{flex-direction:column}
+  .stages-preview{grid-template-columns:1fr 1fr}
+}
 </style>
+</head>
+<body>
 
-<div id="app">
-
-<div id="ss" class="screen active">
-  <div class="start-wrap">
-    <div class="logo">🔍 팩트체크 수사대</div>
-    <div class="logo-sub">단서를 직접 분석하고, 가짜 뉴스를 잡아라!</div>
-    <div class="rank-row">
-      <span class="rank-pill">🪪 인턴 수사관</span>
-      <span class="rank-pill">🕵️ 정식 탐정</span>
-      <span class="rank-pill">🧠 분석 전문가</span>
-      <span class="rank-pill">👑 팩트체크 마스터</span>
-    </div>
-    <button class="start-btn" id="startBtn">🔍 수사 시작하기</button>
+<!-- ── START ── -->
+<div id="start-screen" class="screen active">
+  <div class="logo-wrap">
+    <span class="logo-icon">🔍</span>
+    <div class="logo-title">팩트체크 수사대</div>
+    <div class="logo-sub">단서를 모아 가짜 뉴스를 잡아라!</div>
   </div>
+  <div class="stages-preview" id="stages-preview"></div>
+  <button class="btn-start" id="startBtn">수사 시작하기</button>
 </div>
 
-<div id="gs" class="screen">
-  <div class="ghdr">
-    <div class="hbox">점수 <span class="hval" id="hScore">0</span></div>
-    <div class="lvbadge" id="hLv">🪪 인턴 수사관</div>
-    <div class="hbox">사건 <span class="hval" id="hCase">1</span>/<span id="hTotal">7</span></div>
-    <div class="hbox">단서 정답률 <span class="hval" id="hAcc">-</span></div>
+<!-- ── STAGE INTRO ── -->
+<div id="intro-screen" class="screen">
+  <div class="intro-badge" id="intro-badge"></div>
+  <div class="intro-title" id="intro-title"></div>
+  <div class="intro-desc" id="intro-desc"></div>
+  <div class="intro-rules">
+    <div class="rule"><span class="rule-icon">🕵️</span><span>뉴스를 읽고 7가지 단서를 하나씩 분석해요</span></div>
+    <div class="rule"><span class="rule-icon">⚖️</span><span>단서 3개 이상 조사 후 진짜/가짜 판결을 내려요</span></div>
+    <div class="rule"><span class="rule-icon">🎯</span><span>단서를 많이 맞출수록 보너스 점수가 올라가요</span></div>
+    <div class="rule"><span class="rule-icon">📋</span><span>사건은 총 5개예요</span></div>
+  </div>
+  <div class="pass-notice">⚠️ 5문제 중 3개 이상 맞춰야 다음 스테이지로 진출할 수 있어요!</div>
+  <button class="btn-start" id="introStartBtn">수사 시작!</button>
+</div>
+
+<!-- ── GAME ── -->
+<div id="game-screen" class="screen" style="position:relative">
+  <div class="game-hdr">
+    <div class="hdr-left">
+      <div class="stage-tag" id="g-stage-tag"></div>
+      <div class="case-info" id="g-case-info"></div>
+    </div>
+    <div class="hdr-right">
+      <div class="hdr-box"><div class="hv" id="g-score">0</div><div class="hl">점수</div></div>
+      <div class="hdr-box"><div class="hv" id="g-correct">0/5</div><div class="hl">정답</div></div>
+      <div class="hdr-box"><div class="hv" id="g-clue-acc">-</div><div class="hl">단서정답률</div></div>
+    </div>
   </div>
 
   <div class="news-card">
-    <div class="breaking">🚨 속보 입수</div>
-    <div class="ntitle" id="nTitle"></div>
-    <div class="nbody" id="nBody"></div>
-    <div class="nmeta" id="nMeta"></div>
+    <div class="breaking-tag">🚨 속보 입수</div>
+    <div class="news-title" id="g-news-title"></div>
+    <div class="news-body" id="g-news-body"></div>
+    <div class="news-meta" id="g-news-meta"></div>
   </div>
 
-  <div class="clue-section">
-    <div class="clue-sec-title">🕵️ 각 단서를 분석하고 판정을 선택하세요 — 3개 이상 완료 시 판결 가능</div>
-    <div id="clueList"></div>
-  </div>
+  <div class="clue-sec-title">🕵️ 단서를 직접 분석하고 판정을 선택하세요</div>
+  <div id="clue-list"></div>
 
-  <div class="evbar">
-    <div class="evrow">
-      <span class="evlbl">진행</span>
-      <div class="evdots" id="evDots"></div>
-      <span class="evcnt" id="evCnt">0/7</span>
-      <span class="evhint" id="evHint">3개 이상 완료 후 판결 가능</span>
+  <div class="ev-bar">
+    <div class="ev-row">
+      <span class="ev-lbl">진행</span>
+      <div class="ev-dots" id="ev-dots"></div>
+      <span class="ev-cnt" id="ev-cnt">0/7</span>
+      <span class="ev-hint" id="ev-hint">3개 이상 완료 후 판결 가능</span>
     </div>
   </div>
 
@@ -138,321 +225,593 @@
     <button class="vbtn vbtn-fake" id="btnFake" disabled>❌ 가짜 뉴스</button>
   </div>
 
-  <div id="modalWrap" style="display:none">
-    <div class="modal-wrap">
-      <div class="modal">
-        <div class="res-emoji" id="resEmoji"></div>
-        <div class="res-title" id="resTitle"></div>
-        <div class="res-msg" id="resMsg"></div>
-        <div class="lvup" id="lvUp"></div>
-        <div class="clue-score-row" id="clueScoreRow"></div>
-        <div class="pts-row">
-          <div class="pt-item"><div class="pt-val" id="resPts">+0</div><div class="pt-lbl">수사 포인트</div></div>
-          <div class="pt-item"><div class="pt-val" id="resXp">+0</div><div class="pt-lbl">경험치</div></div>
-        </div>
-        <button class="next-btn" id="nextBtn"></button>
+  <div class="popup-bg" id="popup">
+    <div class="popup">
+      <div class="pop-icon" id="pop-icon"></div>
+      <div class="pop-title" id="pop-title"></div>
+      <div class="pop-explain">
+        <div class="ex-label">📌 해설</div>
+        <div id="pop-explain-text"></div>
       </div>
+      <div class="pop-scores">
+        <div class="pop-sc"><div class="sv" id="pop-pts">+0</div><div class="sl">수사 포인트</div></div>
+        <div class="pop-sc"><div class="sv" id="pop-xp">+0</div><div class="sl">경험치</div></div>
+      </div>
+      <div class="pop-clue" id="pop-clue"></div>
+      <div class="lvup-banner" id="lvup-banner"></div>
+      <button class="pop-next" id="pop-next-btn"></button>
     </div>
   </div>
 </div>
 
-<div id="es" class="screen">
-  <div class="end-wrap">
-    <div class="end-trophy" id="eTrophy"></div>
-    <div class="end-title">수사 완료!</div>
-    <div class="end-rank" id="eRank"></div>
-    <div class="stats-grid">
-      <div class="sbox"><div class="sn" id="eSc">0</div><div class="sl">총 점수</div></div>
-      <div class="sbox"><div class="sn" id="eCorr">0</div><div class="sl">정답 사건</div></div>
-      <div class="sbox"><div class="sn" id="eAcc">0%</div><div class="sl">단서 정답률</div></div>
-    </div>
-    <div class="end-bdg" id="eBdg"></div>
-    <button class="retry-btn" onclick="init()">🔄 다시 수사하기</button>
+<!-- ── STAGE RESULT ── -->
+<div id="stage-result-screen" class="screen">
+  <div class="sr-icon" id="sr-icon"></div>
+  <div class="sr-title" id="sr-title"></div>
+  <div class="sr-sub" id="sr-sub"></div>
+  <div class="sr-stats">
+    <div class="sr-stat"><div class="sv" id="sr-score">0</div><div class="sl">총 점수</div></div>
+    <div class="sr-stat"><div class="sv" id="sr-correct">0/5</div><div class="sl">정답</div></div>
+    <div class="sr-stat"><div class="sv" id="sr-clue">0%</div><div class="sl">단서 정답률</div></div>
   </div>
+  <div id="sr-result-msg"></div>
+  <div id="sr-btns"></div>
 </div>
 
+<!-- ── FINAL END ── -->
+<div id="end-screen" class="screen">
+  <div class="end-trophy">🏆</div>
+  <div class="end-title">모든 수사 완료!</div>
+  <div class="end-rank" id="end-rank"></div>
+  <div class="end-stats">
+    <div class="end-stat"><div class="sv" id="end-score">0</div><div class="sl">총 점수</div></div>
+    <div class="end-stat"><div class="sv" id="end-clue-acc">0%</div><div class="sl">단서 정답률</div></div>
+  </div>
+  <div class="end-badge" id="end-badge"></div>
+  <button class="btn-start" onclick="init()">🔄 처음부터 다시하기</button>
 </div>
 
 <script>
-const CASES=[
+const STAGES = [
   {
-    title:"먹으면 키 10cm 커지는 초콜릿 등장! 전국 매진 임박!",
-    body:"최근 SNS에서 폭발적으로 공유되고 있는 글에 따르면, 특정 초콜릿 제품을 한 달만 먹어도 키가 10cm 성장한다는 주장이 나왔습니다. 이미 수십만 명이 구매했다고 하며, '재고 소진 직전'이라는 경고 문구와 함께 링크가 첨부되어 있습니다.",
-    meta:"출처: 건강소식SNS채널 | 날짜 없음",real:false,
-    explanation:"광고 목적의 가짜 건강 정보입니다. 출처·날짜·기자 이름이 없고 구매 유도 링크가 달려 있습니다.",
-    clues:[
-      {icon:"📰",name:"언론사 확인",evidence:"'건강소식SNS채널'이라는 매체에서 보도했습니다.",
-       choices:["✔️ 신뢰 매체","⚠️ 의심 매체","❌ 가짜 매체"],answer:2,
-       feedback:"SNS 채널은 언론사 등록이 없는 비공식 매체입니다. 신뢰하기 어렵습니다."},
-      {icon:"✍️",name:"기자 이름",evidence:"기사 어디에도 기자 이름이 표기되어 있지 않습니다.",
-       choices:["✔️ 실명 기자 확인","⚠️ 활동명만 있음","❌ 기자 이름 없음"],answer:2,
-       feedback:"신뢰할 수 있는 기사에는 보통 기자 실명이 있습니다. 익명 기사는 책임 소재가 불분명합니다."},
-      {icon:"📅",name:"날짜 확인",evidence:"기사 어디에도 작성 날짜가 표기되어 있지 않습니다.",
-       choices:["✔️ 정확한 날짜 있음","⚠️ 연월만 표기","❌ 날짜 없음"],answer:2,
-       feedback:"날짜가 없으면 정보가 최신인지, 오래된 내용인지 알 수 없습니다."},
-      {icon:"🧾",name:"출처 추적",evidence:"'SNS에서 공유된 글'이 유일한 출처입니다.",
-       choices:["✔️ 공식 기관 출처","⚠️ 개인 전문가 인용","❌ 출처 불명"],answer:2,
-       feedback:"전문 연구기관이나 공인된 출처가 없는 정보는 검증이 불가능합니다."},
-      {icon:"📊",name:"근거 자료",evidence:"'수십만 명이 구매했다'는 수치만 있고 연구 자료는 없습니다.",
-       choices:["✔️ 논문·통계 있음","⚠️ 후기·증언만 있음","❌ 근거 전혀 없음"],answer:1,
-       feedback:"구매 후기나 댓글은 과학적 근거가 될 수 없습니다. 임상 데이터나 논문이 필요합니다."},
-      {icon:"💰",name:"광고 의도",evidence:"'재고 소진 직전' 문구와 함께 구매 링크가 포함되어 있습니다.",
-       choices:["✔️ 광고 없음","⚠️ 간접 협찬","❌ 직접 구매 유도"],answer:2,
-       feedback:"정보 제공을 가장한 광고입니다. 판매 목적으로 과장된 효능을 주장하는 경우가 많습니다."},
-      {icon:"😱",name:"감정 조작",evidence:"'전국 매진 임박!'이라는 문구가 사용되었습니다.",
-       choices:["✔️ 중립적 표현","⚠️ 다소 과장된 표현","❌ 강한 감정 조작"],answer:2,
-       feedback:"조급함을 유발하는 표현은 독자가 냉정하게 판단하지 못하게 합니다. 전형적인 낚시 수법입니다."}
+    id:0,
+    name:"🪪 인턴 수사관",
+    badge:"STAGE 1",
+    title:"인턴 수사관",
+    desc:"아직 수사관 초보예요! 일상에서 자주 보이는 건강·생활 관련 뉴스를 분석해 봐요. 문장이 짧고 쉬워요.",
+    cases:[
+      {
+        title:"먹으면 키 10cm 커지는 초콜릿 등장! 전국 매진 임박!",
+        body:"최근 SNS에서 폭발적으로 공유되고 있는 글에 따르면, 특정 초콜릿 제품을 한 달만 먹어도 키가 10cm 성장한다는 주장이 나왔습니다. 이미 수십만 명이 구매했다고 하며, '재고 소진 직전'이라는 경고 문구와 함께 링크가 첨부되어 있습니다.",
+        meta:"출처: 건강소식SNS채널 | 날짜 없음",real:false,
+        explanation:"광고 목적의 가짜 건강 정보예요. 출처·날짜·기자 이름이 없고 구매 유도 링크가 달려 있어요.",
+        clues:[
+          {icon:"📰",name:"언론사 확인",evidence:"'건강소식SNS채널'이라는 매체에서 보도했습니다.",choices:["✔️ 신뢰 매체","⚠️ 의심 매체","❌ 가짜 매체"],answer:2,feedback:"SNS 채널은 언론사 등록이 없는 비공식 매체예요."},
+          {icon:"✍️",name:"기자 이름",evidence:"기사 어디에도 기자 이름이 없습니다.",choices:["✔️ 실명 기자 확인","⚠️ 활동명만 있음","❌ 기자 이름 없음"],answer:2,feedback:"신뢰할 수 있는 기사에는 보통 기자 실명이 있어요."},
+          {icon:"📅",name:"날짜 확인",evidence:"기사 어디에도 작성 날짜가 없습니다.",choices:["✔️ 정확한 날짜 있음","⚠️ 연월만 표기","❌ 날짜 없음"],answer:2,feedback:"날짜가 없으면 정보가 최신인지 알 수 없어요."},
+          {icon:"🧾",name:"출처 추적",evidence:"'SNS에서 공유된 글'이 유일한 출처입니다.",choices:["✔️ 공식 기관 출처","⚠️ 개인 전문가","❌ 출처 불명"],answer:2,feedback:"전문기관이나 공인된 출처가 없는 정보는 검증이 불가능해요."},
+          {icon:"📊",name:"근거 자료",evidence:"'수십만 명이 구매했다'는 말만 있고 연구 자료는 없습니다.",choices:["✔️ 논문·통계 있음","⚠️ 후기·증언만 있음","❌ 근거 전혀 없음"],answer:1,feedback:"구매 후기는 과학적 근거가 아니에요."},
+          {icon:"💰",name:"광고 의도",evidence:"'재고 소진 직전' 문구와 구매 링크가 있습니다.",choices:["✔️ 광고 없음","⚠️ 간접 협찬","❌ 직접 구매 유도"],answer:2,feedback:"정보처럼 보이지만 실제로는 제품을 팔려는 광고예요."},
+          {icon:"😱",name:"감정 조작",evidence:"'전국 매진 임박!'이라는 문구가 사용되었습니다.",choices:["✔️ 중립적 표현","⚠️ 다소 과장","❌ 강한 감정 조작"],answer:2,feedback:"조급함을 유발해서 생각 없이 클릭하게 만드는 수법이에요."}
+        ]
+      },
+      {
+        title:"교육부, AI 디지털교과서 초·중학교 시범 도입",
+        body:"교육부는 오늘 공식 발표를 통해 초등학교 3·4학년과 중학교 1학년을 대상으로 AI 디지털교과서를 시범 운영한다고 밝혔습니다. 연구보고서와 예산안이 함께 공개됐습니다.",
+        meta:"기자: 김지수 | 한국교육신문 | 2024.11.21",real:true,
+        explanation:"공식 발표, 실명 기자, 정확한 날짜, 연구 근거가 모두 있는 신뢰할 수 있는 기사예요.",
+        clues:[
+          {icon:"📰",name:"언론사 확인",evidence:"'한국교육신문'에서 보도했습니다.",choices:["✔️ 신뢰 매체","⚠️ 의심 매체","❌ 가짜 매체"],answer:0,feedback:"한국교육신문은 교육 전문 등록 언론사예요."},
+          {icon:"✍️",name:"기자 이름",evidence:"'김지수 기자'로 실명이 적혀 있습니다.",choices:["✔️ 실명 기자 확인","⚠️ 활동명만 있음","❌ 기자 이름 없음"],answer:0,feedback:"실명 기자가 있으면 책임 소재가 명확해요."},
+          {icon:"📅",name:"날짜 확인",evidence:"2024.11.21로 정확한 날짜가 적혀 있습니다.",choices:["✔️ 정확한 날짜 있음","⚠️ 연월만 표기","❌ 날짜 없음"],answer:0,feedback:"날짜가 있으면 정보가 얼마나 최신인지 알 수 있어요."},
+          {icon:"🧾",name:"출처 추적",evidence:"교육부 공식 발표 자료를 출처로 밝히고 있습니다.",choices:["✔️ 공식 기관 출처","⚠️ 개인 전문가","❌ 출처 불명"],answer:0,feedback:"교육부는 공신력 있는 정부 부처예요."},
+          {icon:"📊",name:"근거 자료",evidence:"연구보고서와 예산안 공개 자료가 함께 인용되었습니다.",choices:["✔️ 논문·통계 있음","⚠️ 후기·증언만 있음","❌ 근거 전혀 없음"],answer:0,feedback:"공식 문서는 검증 가능한 근거예요."},
+          {icon:"💰",name:"광고 의도",evidence:"특정 제품 구매를 권유하는 내용이 없습니다.",choices:["✔️ 광고 없음","⚠️ 간접 협찬","❌ 직접 구매 유도"],answer:0,feedback:"광고 요소가 없는 순수한 정보 기사예요."},
+          {icon:"😱",name:"감정 조작",evidence:"자극적 표현 없이 사실 위주로 쓰여 있습니다.",choices:["✔️ 중립적 표현","⚠️ 다소 과장","❌ 강한 감정 조작"],answer:0,feedback:"감정 자극 없이 사실만 전달하는 것이 믿을 수 있는 기사의 특징이에요."}
+        ]
+      },
+      {
+        title:"충격! 치약에 독이 들어있다? 매일 먹고 있는 건 아닐까요",
+        body:"한 커뮤니티 게시글에서 '시중 치약에 세탁용 형광증백제 성분이 들어 있어 몸속으로 흡수된다'는 주장이 공유되고 있습니다. 글에는 '천연 치약' 구매 링크가 있고, '지금 당장 바꾸지 않으면 위험합니다'는 문구가 반복됩니다.",
+        meta:"출처: 맘카페 게시글 | 날짜 불명",real:false,
+        explanation:"공포심을 이용한 광고성 허위 정보예요. 치약의 형광증백제 주장은 사실이 아니에요.",
+        clues:[
+          {icon:"📰",name:"언론사 확인",evidence:"맘카페 익명 게시글입니다.",choices:["✔️ 신뢰 매체","⚠️ 의심 매체","❌ 가짜 매체"],answer:2,feedback:"커뮤니티 익명 게시글은 누구나 아무 내용이나 올릴 수 있어요."},
+          {icon:"✍️",name:"기자 이름",evidence:"작성자 닉네임만 있고 실명은 없습니다.",choices:["✔️ 실명 기자 확인","⚠️ 활동명만 있음","❌ 기자 이름 없음"],answer:1,feedback:"닉네임만 있는 게시물은 누가 썼는지 확인이 안 돼요."},
+          {icon:"📅",name:"날짜 확인",evidence:"날짜가 '불명'으로 표기되어 있습니다.",choices:["✔️ 정확한 날짜 있음","⚠️ 연월만 표기","❌ 날짜 없음"],answer:2,feedback:"날짜가 없으면 오래된 가짜 정보가 언제든 다시 퍼질 수 있어요."},
+          {icon:"🧾",name:"출처 추적",evidence:"식약처나 학술기관 출처 없이 주장만 반복됩니다.",choices:["✔️ 공식 기관 출처","⚠️ 개인 전문가","❌ 출처 불명"],answer:2,feedback:"건강 정보는 반드시 공인된 기관의 확인이 필요해요."},
+          {icon:"📊",name:"근거 자료",evidence:"실험이나 연구 없이 '들어있다'는 주장만 있습니다.",choices:["✔️ 논문·통계 있음","⚠️ 후기·증언만 있음","❌ 근거 전혀 없음"],answer:2,feedback:"과학적 검증 없이 사실인 것처럼 주장하는 방식이에요."},
+          {icon:"💰",name:"광고 의도",evidence:"'천연 치약' 구매 링크가 직접 포함되어 있습니다.",choices:["✔️ 광고 없음","⚠️ 간접 협찬","❌ 직접 구매 유도"],answer:2,feedback:"무서운 정보로 겁을 줘서 제품을 팔려는 전략이에요."},
+          {icon:"😱",name:"감정 조작",evidence:"'충격!', '독이 들어있다?', '지금 당장 바꾸지 않으면 위험합니다' 등의 표현이 있습니다.",choices:["✔️ 중립적 표현","⚠️ 다소 과장","❌ 강한 감정 조작"],answer:2,feedback:"무서움을 극도로 자극해서 이성적으로 판단 못하게 해요."}
+        ]
+      },
+      {
+        title:"하루 물 10L 마시면 한 달 만에 키 10cm 성장",
+        body:"건강 유튜버 '진짜건강TV'가 올린 영상에 따르면, 매일 물을 10L 이상 마시면 척추 사이 디스크가 팽창해 키가 커진다고 합니다. 영상 아래에는 건강보조제 협찬 링크가 있고, '100만 뷰 돌파'라는 문구가 달려 있습니다.",
+        meta:"출처: 유튜브 '진짜건강TV' | 2024.08",real:false,
+        explanation:"과학적 근거 없는 유사 건강 정보예요. 물 과다 섭취는 오히려 건강에 해로울 수 있어요.",
+        clues:[
+          {icon:"📰",name:"언론사 확인",evidence:"유튜브 개인 채널 '진짜건강TV'입니다.",choices:["✔️ 신뢰 매체","⚠️ 의심 매체","❌ 가짜 매체"],answer:1,feedback:"개인 유튜브 채널은 등록 언론사가 아니에요."},
+          {icon:"✍️",name:"기자 이름",evidence:"유튜버 활동명만 있고, 전문 자격증은 확인이 안 됩니다.",choices:["✔️ 실명 기자 확인","⚠️ 활동명만 있음","❌ 기자 이름 없음"],answer:1,feedback:"전문가인지 확인되지 않은 유튜버 주장은 조심해야 해요."},
+          {icon:"📅",name:"날짜 확인",evidence:"'2024.08' — 달만 적혀 있고 정확한 날짜는 없습니다.",choices:["✔️ 정확한 날짜 있음","⚠️ 연월만 표기","❌ 날짜 없음"],answer:1,feedback:"정확한 날짜가 없으면 언제 만들어진 정보인지 알기 어려워요."},
+          {icon:"🧾",name:"출처 추적",evidence:"의학 연구기관이나 전문의 인용이 없습니다.",choices:["✔️ 공식 기관 출처","⚠️ 개인 전문가","❌ 출처 불명"],answer:2,feedback:"의료 정보는 전문 의료기관의 확인이 꼭 필요해요."},
+          {icon:"📊",name:"근거 자료",evidence:"임상 데이터나 논문이 없고 댓글 후기만 있습니다.",choices:["✔️ 논문·통계 있음","⚠️ 후기·증언만 있음","❌ 근거 전혀 없음"],answer:1,feedback:"'효과 봤다'는 댓글은 과학적 근거가 아니에요."},
+          {icon:"💰",name:"광고 의도",evidence:"영상 아래에 건강보조제 협찬 링크가 있습니다.",choices:["✔️ 광고 없음","⚠️ 간접 협찬","❌ 직접 구매 유도"],answer:1,feedback:"협찬이 있으면 정보가 제품 판매 목적으로 과장될 수 있어요."},
+          {icon:"😱",name:"감정 조작",evidence:"'한 달 만에 10cm'처럼 놀라운 효과를 강조합니다.",choices:["✔️ 중립적 표현","⚠️ 다소 과장","❌ 강한 감정 조작"],answer:1,feedback:"비현실적인 효과를 강조해서 호기심을 자극하는 방식이에요."}
+        ]
+      },
+      {
+        title:"WHO, 2025년 신종 독감 바이러스 주의보 발령",
+        body:"세계보건기구(WHO)는 공식 홈페이지와 보도자료를 통해 동남아시아에서 H5N2형 조류독감 바이러스의 인체 감염 사례가 확인되었다고 발표했습니다. 한국 질병관리청도 감시 체계를 강화한다고 밝혔습니다.",
+        meta:"기자: 박준혁 | 연합뉴스 | 2025.01.15",real:true,
+        explanation:"WHO와 질병관리청의 공식 발표를 바탕으로 한 신뢰할 수 있는 공중보건 정보예요.",
+        clues:[
+          {icon:"📰",name:"언론사 확인",evidence:"'연합뉴스'에서 보도했습니다.",choices:["✔️ 신뢰 매체","⚠️ 의심 매체","❌ 가짜 매체"],answer:0,feedback:"연합뉴스는 국가 공식 통신사로 신뢰도가 매우 높아요."},
+          {icon:"✍️",name:"기자 이름",evidence:"'박준혁 기자'로 실명이 적혀 있습니다.",choices:["✔️ 실명 기자 확인","⚠️ 활동명만 있음","❌ 기자 이름 없음"],answer:0,feedback:"실명 기자가 확인돼요."},
+          {icon:"📅",name:"날짜 확인",evidence:"2025.01.15로 정확한 날짜가 적혀 있습니다.",choices:["✔️ 정확한 날짜 있음","⚠️ 연월만 표기","❌ 날짜 없음"],answer:0,feedback:"정확한 날짜로 언제 나온 정보인지 알 수 있어요."},
+          {icon:"🧾",name:"출처 추적",evidence:"WHO 공식 홈페이지, 보도자료, 질병관리청이 함께 확인했습니다.",choices:["✔️ 공식 기관 출처","⚠️ 개인 전문가","❌ 출처 불명"],answer:0,feedback:"두 개의 공식 기관이 함께 확인한 정보는 매우 믿을 수 있어요."},
+          {icon:"📊",name:"근거 자료",evidence:"감염 사례 수, 지역, 바이러스 종류가 모두 적혀 있습니다.",choices:["✔️ 논문·통계 있음","⚠️ 후기·증언만 있음","❌ 근거 전혀 없음"],answer:0,feedback:"구체적인 수치와 종류 명시는 검증 가능한 근거예요."},
+          {icon:"💰",name:"광고 의도",evidence:"구매 유도나 제품 홍보 내용이 없습니다.",choices:["✔️ 광고 없음","⚠️ 간접 협찬","❌ 직접 구매 유도"],answer:0,feedback:"광고 요소가 없는 공중보건 정보 기사예요."},
+          {icon:"😱",name:"감정 조작",evidence:"'주의보 발령'이라는 공식 행정 용어가 사용되었습니다.",choices:["✔️ 중립적 표현","⚠️ 다소 과장","❌ 강한 감정 조작"],answer:0,feedback:"'주의보'는 공식 용어예요. 과장이 아니라 사실에 근거한 표현이에요."}
+        ]
+      }
     ]
   },
   {
-    title:"교육부, 2025년부터 AI 디지털교과서 초·중학교 시범 도입",
-    body:"교육부는 오늘 공식 브리핑을 통해 2025학년도 1학기부터 초등학교 3·4학년 및 중학교 1학년을 대상으로 AI 디지털교과서를 시범 운영한다고 발표했습니다. 연구보고서와 예산안이 함께 공개됐습니다.",
-    meta:"기자: 김지수 | 한국교육신문 | 2024.11.21",real:true,
-    explanation:"공식 발표·실명 기자·정확한 날짜·연구 근거가 모두 갖춰진 신뢰할 수 있는 보도입니다.",
-    clues:[
-      {icon:"📰",name:"언론사 확인",evidence:"'한국교육신문'에서 보도했습니다.",
-       choices:["✔️ 신뢰 매체","⚠️ 의심 매체","❌ 가짜 매체"],answer:0,
-       feedback:"한국교육신문은 교육 전문 등록 언론사로 신뢰할 수 있는 매체입니다."},
-      {icon:"✍️",name:"기자 이름",evidence:"'김지수 기자'로 실명이 기재되어 있습니다.",
-       choices:["✔️ 실명 기자 확인","⚠️ 활동명만 있음","❌ 기자 이름 없음"],answer:0,
-       feedback:"실명 기자가 확인되어 책임 소재가 명확합니다."},
-      {icon:"📅",name:"날짜 확인",evidence:"2024.11.21로 정확한 날짜가 기재되어 있습니다.",
-       choices:["✔️ 정확한 날짜 있음","⚠️ 연월만 표기","❌ 날짜 없음"],answer:0,
-       feedback:"명확한 날짜가 있어 정보의 최신성을 확인할 수 있습니다."},
-      {icon:"🧾",name:"출처 추적",evidence:"교육부 공식 브리핑 자료를 출처로 명시하고 있습니다.",
-       choices:["✔️ 공식 기관 출처","⚠️ 개인 전문가 인용","❌ 출처 불명"],answer:0,
-       feedback:"정부 부처의 공식 발표는 가장 신뢰도 높은 출처 중 하나입니다."},
-      {icon:"📊",name:"근거 자료",evidence:"연구보고서 및 예산안 공개 자료가 함께 인용되었습니다.",
-       choices:["✔️ 논문·통계 있음","⚠️ 후기·증언만 있음","❌ 근거 전혀 없음"],answer:0,
-       feedback:"공식 연구보고서와 예산안 자료는 검증 가능한 근거입니다."},
-      {icon:"💰",name:"광고 의도",evidence:"특정 제품이나 서비스를 구매하라는 내용이 없습니다.",
-       choices:["✔️ 광고 없음","⚠️ 간접 협찬","❌ 직접 구매 유도"],answer:0,
-       feedback:"광고나 판매 유도 요소가 없어 순수한 정보 전달 목적의 기사입니다."},
-      {icon:"😱",name:"감정 조작",evidence:"자극적 표현 없이 사실 위주로 서술되어 있습니다.",
-       choices:["✔️ 중립적 표현","⚠️ 다소 과장된 표현","❌ 강한 감정 조작"],answer:0,
-       feedback:"감정을 자극하는 표현 없이 사실만 전달하는 것이 신뢰 기사의 특징입니다."}
+    id:1,
+    name:"🕵️ 정식 탐정",
+    badge:"STAGE 2",
+    title:"정식 탐정",
+    desc:"이제 좀 더 복잡한 사회·환경 뉴스를 분석해요. 기사가 길어지고 숨어있는 단서를 잘 찾아야 해요!",
+    cases:[
+      {
+        title:"'국내산 쌀' 표시했지만 실제론 수입쌀? 대형마트 조사 결과 발표",
+        body:"소비자단체 '먹거리지킴이'가 대형마트 3곳에서 구입한 쌀 제품 30개를 직접 검사한 결과, 그중 8개 제품이 '국내산'이라고 적혀 있었지만 실제로는 수입 쌀이 섞인 것으로 나왔다고 주장했습니다. 단체는 구체적인 검사 방법이나 인증 자료를 공개하지 않았으며, 해당 마트들은 즉각 반박했습니다.",
+        meta:"출처: 소비자단체 보도자료 | 2024.10.05",real:false,
+        explanation:"검사 방법이나 인증 자료 없이 민간단체가 혼자 주장한 내용이에요. 공식 기관의 검증이 없으면 신뢰하기 어려워요.",
+        clues:[
+          {icon:"📰",name:"언론사 확인",evidence:"'소비자단체 먹거리지킴이'의 보도자료입니다.",choices:["✔️ 신뢰 매체","⚠️ 의심 매체","❌ 가짜 매체"],answer:1,feedback:"민간 소비자단체는 언론사가 아니라 이익단체일 수 있어요."},
+          {icon:"✍️",name:"기자 이름",evidence:"단체 관계자 이름만 있고 기자 이름이 없습니다.",choices:["✔️ 실명 기자 확인","⚠️ 활동명만 있음","❌ 기자 이름 없음"],answer:1,feedback:"보도자료는 언론 기사가 아니에요. 홍보 목적이 있을 수 있어요."},
+          {icon:"📅",name:"날짜 확인",evidence:"2024.10.05로 정확한 날짜가 적혀 있습니다.",choices:["✔️ 정확한 날짜 있음","⚠️ 연월만 표기","❌ 날짜 없음"],answer:0,feedback:"날짜는 정확해요. 하지만 날짜만 있다고 믿을 수 있는 건 아니에요."},
+          {icon:"🧾",name:"출처 추적",evidence:"단체 자체 검사 결과만 있고 식품의약품안전처 등 공식 기관 확인이 없습니다.",choices:["✔️ 공식 기관 출처","⚠️ 개인 전문가","❌ 출처 불명"],answer:1,feedback:"식품 문제는 반드시 식약처 같은 공식 기관이 확인해야 해요."},
+          {icon:"📊",name:"근거 자료",evidence:"검사 방법이나 인증 자료를 공개하지 않았습니다.",choices:["✔️ 논문·통계 있음","⚠️ 후기·증언만 있음","❌ 근거 전혀 없음"],answer:2,feedback:"검사 방법을 공개하지 않으면 결과를 믿기 어려워요."},
+          {icon:"💰",name:"광고 의도",evidence:"특정 마트를 비판하는 내용이지만 직접 제품 판매는 없습니다.",choices:["✔️ 광고 없음","⚠️ 간접 협찬","❌ 직접 구매 유도"],answer:0,feedback:"직접 광고는 없지만 단체의 다른 목적이 있을 수 있어요."},
+          {icon:"😱",name:"감정 조작",evidence:"'수입쌀 섞인 것으로 나왔다'는 단정적 표현이 사용됩니다.",choices:["✔️ 중립적 표현","⚠️ 다소 과장","❌ 강한 감정 조작"],answer:1,feedback:"검증 안 된 내용을 사실처럼 단정하면 소비자 불안을 과도하게 자극할 수 있어요."}
+        ]
+      },
+      {
+        title:"환경부, 학교 앞 미세먼지 측정기 전국 설치 완료",
+        body:"환경부는 10월 1일 공식 브리핑에서 전국 초·중·고등학교 교문 앞에 미세먼지 자동 측정기 설치를 완료했다고 발표했습니다. 측정 결과는 에어코리아 앱을 통해 실시간으로 확인할 수 있으며, 교육부와 공동으로 운영한다고 밝혔습니다.",
+        meta:"기자: 이수현 | KBS뉴스 | 2024.10.01",real:true,
+        explanation:"두 개의 공식 정부 부처가 함께 발표한 공신력 있는 정보예요.",
+        clues:[
+          {icon:"📰",name:"언론사 확인",evidence:"'KBS뉴스'에서 보도했습니다.",choices:["✔️ 신뢰 매체","⚠️ 의심 매체","❌ 가짜 매체"],answer:0,feedback:"KBS는 국가 공영방송으로 신뢰도가 높은 언론사예요."},
+          {icon:"✍️",name:"기자 이름",evidence:"'이수현 기자'로 실명이 적혀 있습니다.",choices:["✔️ 실명 기자 확인","⚠️ 활동명만 있음","❌ 기자 이름 없음"],answer:0,feedback:"실명 기자가 확인돼요."},
+          {icon:"📅",name:"날짜 확인",evidence:"2024.10.01로 정확한 날짜가 적혀 있습니다.",choices:["✔️ 정확한 날짜 있음","⚠️ 연월만 표기","❌ 날짜 없음"],answer:0,feedback:"정확한 날짜가 있어요."},
+          {icon:"🧾",name:"출처 추적",evidence:"환경부 공식 브리핑과 에어코리아 앱 확인이 함께 언급됩니다.",choices:["✔️ 공식 기관 출처","⚠️ 개인 전문가","❌ 출처 불명"],answer:0,feedback:"환경부라는 공식 기관의 발표예요."},
+          {icon:"📊",name:"근거 자료",evidence:"설치 완료 학교 수, 실시간 앱 확인 방법이 구체적으로 나옵니다.",choices:["✔️ 논문·통계 있음","⚠️ 후기·증언만 있음","❌ 근거 전혀 없음"],answer:0,feedback:"구체적인 정보와 확인 방법이 있어요."},
+          {icon:"💰",name:"광고 의도",evidence:"특정 제품 구매를 유도하는 내용이 없습니다.",choices:["✔️ 광고 없음","⚠️ 간접 협찬","❌ 직접 구매 유도"],answer:0,feedback:"광고 요소가 없는 공공 정보예요."},
+          {icon:"😱",name:"감정 조작",evidence:"중립적인 정책 발표 내용입니다.",choices:["✔️ 중립적 표현","⚠️ 다소 과장","❌ 강한 감정 조작"],answer:0,feedback:"정책 내용을 중립적으로 전달하는 기사예요."}
+        ]
+      },
+      {
+        title:"스마트폰 10시간 쓰면 뇌 세포 10% 손상된다는 연구 발표",
+        body:"미국 ○○연구소가 청소년 50명을 대상으로 실시한 연구에서 하루 10시간 이상 스마트폰을 사용하면 뇌 세포가 10% 줄어든다는 결과가 나왔다고 SNS에서 퍼지고 있습니다. 해당 연구소 이름은 확인이 안 되고, 원본 논문 링크도 없습니다. 게시글에는 '두뇌 건강 앱' 다운로드 링크가 달려 있습니다.",
+        meta:"출처: 페이스북 공유 게시글 | 2024.09",real:false,
+        explanation:"연구소 이름이 불분명하고 원본 논문도 없어요. 앱 다운로드 유도가 진짜 목적이에요.",
+        clues:[
+          {icon:"📰",name:"언론사 확인",evidence:"페이스북 개인 공유 게시글입니다.",choices:["✔️ 신뢰 매체","⚠️ 의심 매체","❌ 가짜 매체"],answer:2,feedback:"SNS 게시글은 누구나 사실 확인 없이 올릴 수 있어요."},
+          {icon:"✍️",name:"기자 이름",evidence:"게시자의 페이스북 이름만 있습니다.",choices:["✔️ 실명 기자 확인","⚠️ 활동명만 있음","❌ 기자 이름 없음"],answer:1,feedback:"SNS 이름은 기자 실명이 아니에요."},
+          {icon:"📅",name:"날짜 확인",evidence:"'2024.09' — 달만 표기되어 있습니다.",choices:["✔️ 정확한 날짜 있음","⚠️ 연월만 표기","❌ 날짜 없음"],answer:1,feedback:"달만 표기되어 있어서 정확한 날짜를 알 수 없어요."},
+          {icon:"🧾",name:"출처 추적",evidence:"'미국 ○○연구소'라고만 적혀 있고 원본 논문 링크가 없습니다.",choices:["✔️ 공식 기관 출처","⚠️ 개인 전문가","❌ 출처 불명"],answer:2,feedback:"연구소 이름이 불분명하고 논문 링크도 없으면 검증이 불가능해요."},
+          {icon:"📊",name:"근거 자료",evidence:"원본 논문이 없고 '연구에서 나왔다'는 주장만 있습니다.",choices:["✔️ 논문·통계 있음","⚠️ 후기·증언만 있음","❌ 근거 전혀 없음"],answer:2,feedback:"논문이 있다고 해도 링크나 확인 방법이 없으면 믿기 어려워요."},
+          {icon:"💰",name:"광고 의도",evidence:"게시글에 '두뇌 건강 앱' 다운로드 링크가 달려 있습니다.",choices:["✔️ 광고 없음","⚠️ 간접 협찬","❌ 직접 구매 유도"],answer:2,feedback:"무서운 정보로 불안을 조성한 뒤 앱을 설치하게 만드는 전략이에요."},
+          {icon:"😱",name:"감정 조작",evidence:"'뇌 세포 손상'이라는 충격적인 표현으로 공포를 줍니다.",choices:["✔️ 중립적 표현","⚠️ 다소 과장","❌ 강한 감정 조작"],answer:2,feedback:"공포심을 자극해서 앱 다운로드를 유도하는 전형적인 방식이에요."}
+        ]
+      },
+      {
+        title:"서울시, 청소년 대중교통 무상 이용 정책 내년 1월 시행",
+        body:"서울시는 14일 시청 브리핑룸에서 만 18세 이하 청소년이 지하철과 버스를 무료로 이용할 수 있는 '청소년 대중교통 무상 이용' 정책을 내년 1월 1일부터 시행한다고 발표했습니다. 예산은 연간 약 3,200억 원이며, 학생증이나 청소년 교통카드로 자동 할인이 적용됩니다.",
+        meta:"기자: 최준서 | MBC뉴스 | 2024.11.14",real:true,
+        explanation:"서울시 공식 발표, 실명 기자, 정확한 날짜와 예산 규모가 모두 있는 신뢰할 수 있는 정책 기사예요.",
+        clues:[
+          {icon:"📰",name:"언론사 확인",evidence:"'MBC뉴스'에서 보도했습니다.",choices:["✔️ 신뢰 매체","⚠️ 의심 매체","❌ 가짜 매체"],answer:0,feedback:"MBC는 공신력 있는 방송사예요."},
+          {icon:"✍️",name:"기자 이름",evidence:"'최준서 기자'로 실명이 적혀 있습니다.",choices:["✔️ 실명 기자 확인","⚠️ 활동명만 있음","❌ 기자 이름 없음"],answer:0,feedback:"실명 기자가 확인돼요."},
+          {icon:"📅",name:"날짜 확인",evidence:"2024.11.14로 정확한 날짜가 있습니다.",choices:["✔️ 정확한 날짜 있음","⚠️ 연월만 표기","❌ 날짜 없음"],answer:0,feedback:"정확한 날짜가 있어요."},
+          {icon:"🧾",name:"출처 추적",evidence:"서울시 공식 브리핑 발표 자료를 출처로 밝히고 있습니다.",choices:["✔️ 공식 기관 출처","⚠️ 개인 전문가","❌ 출처 불명"],answer:0,feedback:"서울시라는 공식 기관의 발표예요."},
+          {icon:"📊",name:"근거 자료",evidence:"예산 3,200억 원과 시행 방법이 구체적으로 나옵니다.",choices:["✔️ 논문·통계 있음","⚠️ 후기·증언만 있음","❌ 근거 전혀 없음"],answer:0,feedback:"구체적인 숫자와 시행 방법이 검증 가능한 근거예요."},
+          {icon:"💰",name:"광고 의도",evidence:"특정 제품 구매 유도 내용이 없습니다.",choices:["✔️ 광고 없음","⚠️ 간접 협찬","❌ 직접 구매 유도"],answer:0,feedback:"광고 없는 공공 정책 기사예요."},
+          {icon:"😱",name:"감정 조작",evidence:"정책 내용을 사실 위주로 전달합니다.",choices:["✔️ 중립적 표현","⚠️ 다소 과장","❌ 강한 감정 조작"],answer:0,feedback:"감정 조작 없이 사실을 전달하는 기사예요."}
+        ]
+      },
+      {
+        title:"'무농약 채소' 먹어도 농약 검출? 인증 제도 신뢰 무너져",
+        body:"한 블로그 글에서 '인증을 받은 무농약 채소에서도 농약이 검출됐다'는 주장이 나왔습니다. 글쓴이는 '개인 자체 검사 결과'라고만 하고 검사 기관이나 방법을 밝히지 않았습니다. 글 하단에는 '직접 재배한 유기농 채소 판매' 링크가 있습니다.",
+        meta:"출처: 개인 블로그 | 2024.08",real:false,
+        explanation:"검사 방법도 없고, 실제로 채소를 파는 블로그예요. 판매를 위해 인증 제도에 의심을 심으려는 목적이 있어요.",
+        clues:[
+          {icon:"📰",name:"언론사 확인",evidence:"개인 블로그 게시글입니다.",choices:["✔️ 신뢰 매체","⚠️ 의심 매체","❌ 가짜 매체"],answer:2,feedback:"개인 블로그는 사실 확인 과정이 없어요."},
+          {icon:"✍️",name:"기자 이름",evidence:"블로그 닉네임만 있습니다.",choices:["✔️ 실명 기자 확인","⚠️ 활동명만 있음","❌ 기자 이름 없음"],answer:1,feedback:"닉네임만으로는 누가 썼는지 알 수 없어요."},
+          {icon:"📅",name:"날짜 확인",evidence:"'2024.08' — 달만 표기입니다.",choices:["✔️ 정확한 날짜 있음","⚠️ 연월만 표기","❌ 날짜 없음"],answer:1,feedback:"달만 있어서 정확한 날짜를 알 수 없어요."},
+          {icon:"🧾",name:"출처 추적",evidence:"'개인 자체 검사'라고만 하고 기관 이름이 없습니다.",choices:["✔️ 공식 기관 출처","⚠️ 개인 전문가","❌ 출처 불명"],answer:2,feedback:"어디서 검사했는지 알 수 없으면 믿을 수 없어요."},
+          {icon:"📊",name:"근거 자료",evidence:"검사 기관과 방법을 밝히지 않았습니다.",choices:["✔️ 논문·통계 있음","⚠️ 후기·증언만 있음","❌ 근거 전혀 없음"],answer:2,feedback:"방법을 공개하지 않으면 결과를 확인할 방법이 없어요."},
+          {icon:"💰",name:"광고 의도",evidence:"글 하단에 '직접 재배한 유기농 채소 판매' 링크가 있습니다.",choices:["✔️ 광고 없음","⚠️ 간접 협찬","❌ 직접 구매 유도"],answer:2,feedback:"다른 인증 제품을 나쁘게 말해서 자기 제품을 팔려는 전략이에요."},
+          {icon:"😱",name:"감정 조작",evidence:"'인증 제도 신뢰 무너져'라는 표현이 사용됩니다.",choices:["✔️ 중립적 표현","⚠️ 다소 과장","❌ 강한 감정 조작"],answer:2,feedback:"불안감을 극도로 자극해서 자기 제품을 사게 만드는 표현이에요."}
+        ]
+      }
     ]
   },
   {
-    title:"충격! 치약에 '형광증백제' 들어있다? 매일 독을 먹고 있는 건가요",
-    body:"최근 한 커뮤니티에서 '시중 치약 대부분에 세탁 시 사용하는 형광증백제 성분이 들어 있어 매일 몸속으로 흡수된다'는 글이 빠르게 공유되고 있습니다. 글에는 특정 '천연 치약' 구매 링크가 포함되어 있으며, '지금 당장 교체하지 않으면 위험합니다'라는 문구가 반복됩니다.",
-    meta:"출처: 맘카페 게시글 | 날짜 불명",real:false,
-    explanation:"공포심을 이용한 광고성 허위 건강 정보입니다. 치약의 형광증백제 주장은 사실 무근입니다.",
-    clues:[
-      {icon:"📰",name:"언론사 확인",evidence:"맘카페 익명 게시글에서 시작된 내용입니다.",
-       choices:["✔️ 신뢰 매체","⚠️ 의심 매체","❌ 가짜 매체"],answer:2,
-       feedback:"커뮤니티 익명 게시글은 언론사가 아닙니다. 사실 확인 없이 퍼지는 경우가 많습니다."},
-      {icon:"✍️",name:"기자 이름",evidence:"작성자 닉네임만 있고 실명은 없습니다.",
-       choices:["✔️ 실명 기자 확인","⚠️ 활동명만 있음","❌ 기자 이름 없음"],answer:1,
-       feedback:"닉네임만 있는 게시물은 책임 소재가 없어 허위 정보가 퍼지기 쉬운 환경입니다."},
-      {icon:"📅",name:"날짜 확인",evidence:"날짜가 '불명'으로 표기되어 있습니다.",
-       choices:["✔️ 정확한 날짜 있음","⚠️ 연월만 표기","❌ 날짜 없음"],answer:2,
-       feedback:"날짜가 없으면 오래된 허위 정보가 언제든 다시 퍼질 수 있습니다."},
-      {icon:"🧾",name:"출처 추적",evidence:"식약처나 학술기관 출처 없이 주장만 반복됩니다.",
-       choices:["✔️ 공식 기관 출처","⚠️ 개인 전문가 인용","❌ 출처 불명"],answer:2,
-       feedback:"식약처나 의료 전문기관이 검증한 내용이 아니면 건강 정보로 신뢰하기 어렵습니다."},
-      {icon:"📊",name:"근거 자료",evidence:"실험 데이터나 연구 없이 '들어있다'는 단언만 있습니다.",
-       choices:["✔️ 논문·통계 있음","⚠️ 후기·증언만 있음","❌ 근거 전혀 없음"],answer:2,
-       feedback:"단순 단언은 근거가 아닙니다. 과학적 검증 없이 사실처럼 주장하는 방식입니다."},
-      {icon:"💰",name:"광고 의도",evidence:"'천연 치약' 구매 링크가 직접 포함되어 있습니다.",
-       choices:["✔️ 광고 없음","⚠️ 간접 협찬","❌ 직접 구매 유도"],answer:2,
-       feedback:"정보를 가장해 특정 제품을 판매하는 전형적인 광고성 허위 정보입니다."},
-      {icon:"😱",name:"감정 조작",evidence:"'충격!', '매일 독을 먹고 있는 건가요', '지금 당장 교체하지 않으면 위험합니다'라는 표현이 사용됩니다.",
-       choices:["✔️ 중립적 표현","⚠️ 다소 과장된 표현","❌ 강한 감정 조작"],answer:2,
-       feedback:"공포심을 극도로 자극하는 표현들입니다. 독자가 이성적으로 판단하지 못하도록 유도합니다."}
+    id:2,
+    name:"🧠 분석 전문가",
+    badge:"STAGE 3",
+    title:"분석 전문가",
+    desc:"이제 경제·과학 분야 뉴스도 다뤄요! 기사가 길고 복잡해서 꼼꼼히 읽어야 숨어있는 거짓을 찾을 수 있어요.",
+    cases:[
+      {
+        title:"청소년 아르바이트 최저시급 4,500원으로 낮춰야 한다는 주장 확산",
+        body:"한 경제 단체가 발표한 보고서에서 '청소년은 경험이 부족하기 때문에 현행 최저시급보다 낮은 4,500원을 적용해야 한다'는 주장이 담겼습니다. 보고서는 이 단체의 자체 조사 결과만을 근거로 삼고 있으며, 청소년 노동권 단체 등의 의견은 전혀 반영되지 않았습니다. SNS에서 '청소년도 성인과 같은 일을 하는데 왜 다른 대우를 받아야 하냐'는 반박 의견도 퍼지고 있습니다.",
+        meta:"출처: 한국소상공인연합 보고서 | 2024.10.20",real:false,
+        explanation:"한쪽 이익단체의 의견만 담은 보고서예요. 최저임금은 법으로 정해지는데, 일부 단체의 주장을 마치 사실인 것처럼 퍼뜨리면 안 돼요.",
+        clues:[
+          {icon:"📰",name:"언론사 확인",evidence:"'한국소상공인연합'이라는 단체의 보고서입니다.",choices:["✔️ 신뢰 매체","⚠️ 의심 매체","❌ 가짜 매체"],answer:1,feedback:"이익단체의 보고서는 자신들에게 유리한 방향으로 쓰일 수 있어요."},
+          {icon:"✍️",name:"기자 이름",evidence:"단체 연구원 이름만 있고 언론 기자 이름이 없습니다.",choices:["✔️ 실명 기자 확인","⚠️ 활동명만 있음","❌ 기자 이름 없음"],answer:1,feedback:"보도자료는 기자가 쓴 기사가 아니에요."},
+          {icon:"📅",name:"날짜 확인",evidence:"2024.10.20으로 날짜가 있습니다.",choices:["✔️ 정확한 날짜 있음","⚠️ 연월만 표기","❌ 날짜 없음"],answer:0,feedback:"날짜는 정확해요."},
+          {icon:"🧾",name:"출처 추적",evidence:"단체 자체 조사만 있고 고용노동부 등 공식 기관 근거가 없습니다.",choices:["✔️ 공식 기관 출처","⚠️ 개인 전문가","❌ 출처 불명"],answer:1,feedback:"최저임금 관련 공식 기관인 최저임금위원회나 고용노동부 자료가 있어야 해요."},
+          {icon:"📊",name:"근거 자료",evidence:"자체 조사 결과만 있고, 반대 의견이나 다른 연구는 포함되지 않았습니다.",choices:["✔️ 논문·통계 있음","⚠️ 후기·증언만 있음","❌ 근거 전혀 없음"],answer:1,feedback:"한쪽 입장만 담은 자료는 균형 잡힌 근거가 아니에요."},
+          {icon:"💰",name:"광고 의도",evidence:"인건비를 줄이고 싶은 소상공인 단체의 주장입니다.",choices:["✔️ 광고 없음","⚠️ 간접 협찬","❌ 직접 구매 유도"],answer:1,feedback:"직접 광고는 아니지만, 단체의 경제적 이익을 위한 주장일 수 있어요."},
+          {icon:"😱",name:"감정 조작",evidence:"'청소년은 경험이 부족하다'는 단정이 사용됩니다.",choices:["✔️ 중립적 표현","⚠️ 다소 과장","❌ 강한 감정 조작"],answer:1,feedback:"청소년을 하나로 규정하는 단정적 표현은 편향된 주장을 강화해요."}
+        ]
+      },
+      {
+        title:"한국은행, 기준금리 0.25% 인하…가계 대출 이자 부담 줄어",
+        body:"한국은행 금융통화위원회는 11월 28일 정기회의에서 기준금리를 연 3.25%에서 3.00%로 0.25%포인트 인하한다고 결정했습니다. 이창용 한국은행 총재는 기자간담회에서 '국내 소비 회복세가 예상보다 느리고, 수출 증가세도 둔화되어 경기 부양을 위한 결정을 내렸다'고 밝혔습니다. 시중 은행들은 이번 결정에 따라 주택담보대출 금리를 0.1~0.3% 낮출 예정입니다.",
+        meta:"기자: 김태양 | 한국경제신문 | 2024.11.28",real:true,
+        explanation:"한국은행의 공식 결정과 총재 발언, 정확한 수치가 모두 있는 신뢰할 수 있는 경제 기사예요.",
+        clues:[
+          {icon:"📰",name:"언론사 확인",evidence:"'한국경제신문'에서 보도했습니다.",choices:["✔️ 신뢰 매체","⚠️ 의심 매체","❌ 가짜 매체"],answer:0,feedback:"한국경제신문은 경제 전문 등록 언론사예요."},
+          {icon:"✍️",name:"기자 이름",evidence:"'김태양 기자'로 실명이 적혀 있습니다.",choices:["✔️ 실명 기자 확인","⚠️ 활동명만 있음","❌ 기자 이름 없음"],answer:0,feedback:"실명 기자가 확인돼요."},
+          {icon:"📅",name:"날짜 확인",evidence:"2024.11.28로 정확한 날짜가 있습니다.",choices:["✔️ 정확한 날짜 있음","⚠️ 연월만 표기","❌ 날짜 없음"],answer:0,feedback:"정확한 날짜예요."},
+          {icon:"🧾",name:"출처 추적",evidence:"한국은행 금융통화위원회 공식 결정과 총재 발언이 출처입니다.",choices:["✔️ 공식 기관 출처","⚠️ 개인 전문가","❌ 출처 불명"],answer:0,feedback:"한국은행은 국가 공식 중앙은행이에요."},
+          {icon:"📊",name:"근거 자료",evidence:"기준금리 수치, 인하 폭, 대출 금리 변동 예상치가 구체적으로 나옵니다.",choices:["✔️ 논문·통계 있음","⚠️ 후기·증언만 있음","❌ 근거 전혀 없음"],answer:0,feedback:"구체적인 수치와 근거가 충분해요."},
+          {icon:"💰",name:"광고 의도",evidence:"특정 금융 상품 구매를 권하는 내용이 없습니다.",choices:["✔️ 광고 없음","⚠️ 간접 협찬","❌ 직접 구매 유도"],answer:0,feedback:"광고 없는 순수한 경제 정보 기사예요."},
+          {icon:"😱",name:"감정 조작",evidence:"경제 용어를 사용하며 사실 위주로 서술합니다.",choices:["✔️ 중립적 표현","⚠️ 다소 과장","❌ 강한 감정 조작"],answer:0,feedback:"중립적이고 사실 중심의 경제 기사예요."}
+        ]
+      },
+      {
+        title:"'비트코인 투자하면 매달 30% 수익 보장' 카카오톡 단체방 확산",
+        body:"카카오톡 단체방에서 '비트코인 자동 투자 프로그램을 쓰면 매달 30%의 수익이 보장된다'는 메시지가 퍼지고 있습니다. 메시지에는 '이미 수백 명이 수익을 올렸다'는 후기가 포함되어 있으며, 가입비 50만 원을 내면 참여할 수 있다고 합니다. 금융감독원은 이런 투자를 약속하는 서비스는 불법일 가능성이 높다고 경고하고 있습니다.",
+        meta:"출처: 카카오톡 단체방 메시지 | 날짜 불명",real:false,
+        explanation:"투자 수익을 '보장'하는 건 불법이에요. 금융감독원도 이를 사기로 경고하고 있어요.",
+        clues:[
+          {icon:"📰",name:"언론사 확인",evidence:"카카오톡 단체방 메시지입니다.",choices:["✔️ 신뢰 매체","⚠️ 의심 매체","❌ 가짜 매체"],answer:2,feedback:"메신저 메시지는 아무나 보낼 수 있어요. 검증된 언론 매체가 아니에요."},
+          {icon:"✍️",name:"기자 이름",evidence:"발신자 이름만 있습니다.",choices:["✔️ 실명 기자 확인","⚠️ 활동명만 있음","❌ 기자 이름 없음"],answer:1,feedback:"메신저 이름만으로는 신뢰할 수 없어요."},
+          {icon:"📅",name:"날짜 확인",evidence:"날짜가 없습니다.",choices:["✔️ 정확한 날짜 있음","⚠️ 연월만 표기","❌ 날짜 없음"],answer:2,feedback:"날짜가 없어요."},
+          {icon:"🧾",name:"출처 추적",evidence:"금융감독원이 이런 서비스를 불법이라고 경고하고 있습니다.",choices:["✔️ 공식 기관 출처","⚠️ 개인 전문가","❌ 출처 불명"],answer:2,feedback:"투자 관련 공식 기관인 금융감독원이 반대로 경고를 하고 있어요."},
+          {icon:"📊",name:"근거 자료",evidence:"'수백 명이 수익 올렸다'는 후기만 있습니다.",choices:["✔️ 논문·통계 있음","⚠️ 후기·증언만 있음","❌ 근거 전혀 없음"],answer:1,feedback:"투자 후기는 조작될 수 있어요. 공신력 있는 근거가 아니에요."},
+          {icon:"💰",name:"광고 의도",evidence:"가입비 50만 원을 내라고 합니다.",choices:["✔️ 광고 없음","⚠️ 간접 협찬","❌ 직접 구매 유도"],answer:2,feedback:"돈을 내게 하는 것이 목적인 명백한 사기예요."},
+          {icon:"😱",name:"감정 조작",evidence:"'매달 30% 수익 보장'이라는 표현으로 욕심을 자극합니다.",choices:["✔️ 중립적 표현","⚠️ 다소 과장","❌ 강한 감정 조작"],answer:2,feedback:"'보장'이라는 말로 욕심을 자극하는 전형적인 사기 수법이에요."}
+        ]
+      },
+      {
+        title:"과학기술정보통신부, AI 교육 예산 2조 원 배정 발표",
+        body:"과학기술정보통신부는 12월 5일 정부과천청사에서 브리핑을 열고 2025년도 AI 인재 양성 예산으로 2조 1,400억 원을 배정했다고 발표했습니다. 이 중 1,200억 원은 초·중·고등학교 AI 교육 과정 개발과 교사 연수에 쓰이며, 나머지는 대학원 연구 지원에 배정됩니다.",
+        meta:"기자: 박소연 | 조선일보 | 2024.12.05",real:true,
+        explanation:"정부 부처의 공식 브리핑, 실명 기자, 구체적인 예산 배분 내역이 있는 신뢰할 수 있는 기사예요.",
+        clues:[
+          {icon:"📰",name:"언론사 확인",evidence:"'조선일보'에서 보도했습니다.",choices:["✔️ 신뢰 매체","⚠️ 의심 매체","❌ 가짜 매체"],answer:0,feedback:"조선일보는 국내 주요 등록 언론사예요."},
+          {icon:"✍️",name:"기자 이름",evidence:"'박소연 기자'로 실명이 적혀 있습니다.",choices:["✔️ 실명 기자 확인","⚠️ 활동명만 있음","❌ 기자 이름 없음"],answer:0,feedback:"실명 기자 확인이에요."},
+          {icon:"📅",name:"날짜 확인",evidence:"2024.12.05로 정확한 날짜가 있습니다.",choices:["✔️ 정확한 날짜 있음","⚠️ 연월만 표기","❌ 날짜 없음"],answer:0,feedback:"정확한 날짜예요."},
+          {icon:"🧾",name:"출처 추적",evidence:"과학기술정보통신부 공식 브리핑이 출처입니다.",choices:["✔️ 공식 기관 출처","⚠️ 개인 전문가","❌ 출처 불명"],answer:0,feedback:"정부 부처 공식 발표예요."},
+          {icon:"📊",name:"근거 자료",evidence:"총 예산과 세부 배분 내역이 구체적으로 나옵니다.",choices:["✔️ 논문·통계 있음","⚠️ 후기·증언만 있음","❌ 근거 전혀 없음"],answer:0,feedback:"구체적인 예산 수치는 검증 가능한 근거예요."},
+          {icon:"💰",name:"광고 의도",evidence:"특정 회사 제품 구매 유도가 없습니다.",choices:["✔️ 광고 없음","⚠️ 간접 협찬","❌ 직접 구매 유도"],answer:0,feedback:"광고 없는 공공 정책 기사예요."},
+          {icon:"😱",name:"감정 조작",evidence:"정책 수치를 사실 위주로 전달합니다.",choices:["✔️ 중립적 표현","⚠️ 다소 과장","❌ 강한 감정 조작"],answer:0,feedback:"수치 중심의 중립적 기사예요."}
+        ]
+      },
+      {
+        title:"'신재생에너지 100% 전환하면 정전 대란' 전문가 경고",
+        body:"한 에너지 블로그에서 '태양광·풍력만으로는 전기 공급이 불안정해져 대규모 정전이 발생한다'는 내용의 글이 확산되고 있습니다. 글에는 '전 세계에서 신재생에너지 100%를 달성한 나라는 없다'는 주장이 있지만, 아이슬란드·노르웨이 등 실제 사례를 언급하지 않았습니다. 글쓴이는 화력발전 관련 기업 자문위원임이 글 하단에 적혀 있습니다.",
+        meta:"출처: 에너지토크 블로그 | 2024.11",real:false,
+        explanation:"화력발전 회사 자문위원이 자신의 이익에 유리한 방향으로 정보를 선택한 사례예요. 이미 신재생에너지 100%를 달성한 나라들이 실제로 있어요.",
+        clues:[
+          {icon:"📰",name:"언론사 확인",evidence:"개인 에너지 블로그 글입니다.",choices:["✔️ 신뢰 매체","⚠️ 의심 매체","❌ 가짜 매체"],answer:1,feedback:"개인 블로그는 전문 언론이 아니에요. 누구나 의견을 올릴 수 있어요."},
+          {icon:"✍️",name:"기자 이름",evidence:"화력발전 기업 자문위원 이름이 있지만, 언론 기자가 아닙니다.",choices:["✔️ 실명 기자 확인","⚠️ 활동명만 있음","❌ 기자 이름 없음"],answer:1,feedback:"자문위원은 이해관계가 있는 전문가예요. 중립적이지 않을 수 있어요."},
+          {icon:"📅",name:"날짜 확인",evidence:"'2024.11' — 달만 표기입니다.",choices:["✔️ 정확한 날짜 있음","⚠️ 연월만 표기","❌ 날짜 없음"],answer:1,feedback:"달만 있어서 정확하지 않아요."},
+          {icon:"🧾",name:"출처 추적",evidence:"국제에너지기구(IEA) 등 공식 에너지 기관 자료 없이 주장만 있습니다.",choices:["✔️ 공식 기관 출처","⚠️ 개인 전문가","❌ 출처 불명"],answer:1,feedback:"에너지 전문기관의 공식 데이터가 없어요."},
+          {icon:"📊",name:"근거 자료",evidence:"아이슬란드, 노르웨이 같은 반례를 의도적으로 생략했습니다.",choices:["✔️ 논문·통계 있음","⚠️ 후기·증언만 있음","❌ 근거 전혀 없음"],answer:1,feedback:"불리한 사례를 빼고 유리한 것만 보여주는 것도 잘못된 정보 제공이에요."},
+          {icon:"💰",name:"광고 의도",evidence:"화력발전 기업 자문위원이 화력발전에 유리한 주장을 하고 있습니다.",choices:["✔️ 광고 없음","⚠️ 간접 협찬","❌ 직접 구매 유도"],answer:1,feedback:"이해관계 있는 전문가의 주장은 의도적으로 편향될 수 있어요."},
+          {icon:"😱",name:"감정 조작",evidence:"'정전 대란'이라는 표현으로 불안을 조성합니다.",choices:["✔️ 중립적 표현","⚠️ 다소 과장","❌ 강한 감정 조작"],answer:2,feedback:"'정전 대란'은 극단적인 불안을 심어주는 표현이에요."}
+        ]
+      }
     ]
   },
   {
-    title:"2016년 폭염 때 에어컨 켜면 바이러스 확산? 다시 주목",
-    body:"2016년에 작성된 온라인 게시글이 최근 다시 공유되기 시작했습니다. '밀폐 공간에서 에어컨을 켜면 바이러스가 더 빨리 퍼진다'는 내용이며, 코로나19 유행 이후 다시 확산되었습니다. 작성자는 '한 의사'로만 표기되어 있습니다.",
-    meta:"출처: 네이버 카페 게시글 | 원본: 2016.07 | 재확산: 2024",real:false,
-    explanation:"오래된 정보를 맥락 없이 재활용한 사례입니다. 2016년 글이며, 작성자 신원도 확인 불가합니다.",
-    clues:[
-      {icon:"📰",name:"언론사 확인",evidence:"네이버 카페 개인 게시글입니다.",
-       choices:["✔️ 신뢰 매체","⚠️ 의심 매체","❌ 가짜 매체"],answer:2,
-       feedback:"네이버 카페는 누구나 글을 올릴 수 있는 공간으로 언론사가 아닙니다."},
-      {icon:"✍️",name:"기자 이름",evidence:"'한 의사'로만 표기되어 있습니다.",
-       choices:["✔️ 실명 기자 확인","⚠️ 활동명만 있음","❌ 기자 이름 없음"],answer:2,
-       feedback:"'한 의사'는 누구인지 확인이 불가능합니다. 익명은 신뢰 근거가 되지 않습니다."},
-      {icon:"📅",name:"날짜 확인",evidence:"원본은 2016년 글이고 2024년에 재확산된 것입니다.",
-       choices:["✔️ 정확한 날짜 있음","⚠️ 연월만 표기","❌ 날짜 없음"],answer:1,
-       feedback:"날짜는 있지만, 8년 된 정보를 새 정보인 것처럼 유통하는 것이 문제입니다."},
-      {icon:"🧾",name:"출처 추적",evidence:"학술·의료기관 출처가 없고 개인 게시글만 있습니다.",
-       choices:["✔️ 공식 기관 출처","⚠️ 개인 전문가 인용","❌ 출처 불명"],answer:2,
-       feedback:"의료 관련 정보는 반드시 공인된 기관의 검증이 필요합니다."},
-      {icon:"📊",name:"근거 자료",evidence:"데이터나 논문 없이 '확산된다'는 주장만 있습니다.",
-       choices:["✔️ 논문·통계 있음","⚠️ 후기·증언만 있음","❌ 근거 전혀 없음"],answer:2,
-       feedback:"주장만 있고 검증 가능한 근거가 전혀 없습니다."},
-      {icon:"💰",name:"광고 의도",evidence:"직접적인 광고는 없지만 클릭 유도용 제목입니다.",
-       choices:["✔️ 광고 없음","⚠️ 간접 협찬","❌ 직접 구매 유도"],answer:0,
-       feedback:"직접적인 광고는 없지만 클릭을 유도하는 낚시성 제목이 사용되었습니다."},
-      {icon:"😱",name:"감정 조작",evidence:"'다시 주목'이라는 표현으로 긴박감을 부여합니다.",
-       choices:["✔️ 중립적 표현","⚠️ 다소 과장된 표현","❌ 강한 감정 조작"],answer:1,
-       feedback:"'다시 주목'처럼 오래된 정보에 긴박감을 부여하는 것은 감정 조작의 한 형태입니다."}
-    ]
-  },
-  {
-    title:"WHO, 2025년 신종 독감 바이러스 주의보 발령",
-    body:"세계보건기구(WHO)는 공식 홈페이지 및 보도자료를 통해 동남아시아에서 H5N2형 조류독감 바이러스의 인체 감염 사례가 확인되었다고 발표했습니다. 한국 질병관리청도 이를 확인하고 감시 체계를 강화한다고 밝혔습니다.",
-    meta:"기자: 박준혁 | 연합뉴스 | 2025.01.15",real:true,
-    explanation:"WHO와 질병관리청의 공식 발표를 바탕으로 한 신뢰할 수 있는 공중보건 정보입니다.",
-    clues:[
-      {icon:"📰",name:"언론사 확인",evidence:"'연합뉴스'에서 보도했습니다.",
-       choices:["✔️ 신뢰 매체","⚠️ 의심 매체","❌ 가짜 매체"],answer:0,
-       feedback:"연합뉴스는 국가 공식 통신사로 가장 높은 신뢰도를 가진 언론사 중 하나입니다."},
-      {icon:"✍️",name:"기자 이름",evidence:"'박준혁 기자'로 실명이 기재되어 있습니다.",
-       choices:["✔️ 실명 기자 확인","⚠️ 활동명만 있음","❌ 기자 이름 없음"],answer:0,
-       feedback:"실명 기자가 확인됩니다. 책임 소재가 명확합니다."},
-      {icon:"📅",name:"날짜 확인",evidence:"2025.01.15로 명확한 날짜가 기재되어 있습니다.",
-       choices:["✔️ 정확한 날짜 있음","⚠️ 연월만 표기","❌ 날짜 없음"],answer:0,
-       feedback:"정확한 날짜가 있어 정보의 최신성을 확인할 수 있습니다."},
-      {icon:"🧾",name:"출처 추적",evidence:"WHO 공식 홈페이지, 보도자료, 질병관리청이 이중으로 확인했습니다.",
-       choices:["✔️ 공식 기관 출처","⚠️ 개인 전문가 인용","❌ 출처 불명"],answer:0,
-       feedback:"두 개의 공식 기관이 동시에 확인한 정보는 신뢰도가 매우 높습니다."},
-      {icon:"📊",name:"근거 자료",evidence:"인체 감염 사례 수, 지역, 바이러스 유형이 명시되어 있습니다.",
-       choices:["✔️ 논문·통계 있음","⚠️ 후기·증언만 있음","❌ 근거 전혀 없음"],answer:0,
-       feedback:"구체적인 수치와 바이러스 유형 명시는 검증 가능한 근거입니다."},
-      {icon:"💰",name:"광고 의도",evidence:"구매 유도나 제품 홍보 내용이 없습니다.",
-       choices:["✔️ 광고 없음","⚠️ 간접 협찬","❌ 직접 구매 유도"],answer:0,
-       feedback:"광고 요소가 전혀 없는 순수한 공중보건 정보 보도입니다."},
-      {icon:"😱",name:"감정 조작",evidence:"'주의보 발령'이라는 공식 용어가 사용되었습니다.",
-       choices:["✔️ 중립적 표현","⚠️ 다소 과장된 표현","❌ 강한 감정 조작"],answer:0,
-       feedback:"'주의보'는 공식 행정 용어입니다. 과장이 아닌 사실에 근거한 표현입니다."}
+    id:3,
+    name:"👑 팩트체크 마스터",
+    badge:"STAGE 4",
+    title:"팩트체크 마스터",
+    desc:"최고 단계예요! 정치·국제·복잡한 경제 뉴스를 다뤄요. 여러 가지 정보가 섞여 있어서 세심하게 분석해야 해요.",
+    cases:[
+      {
+        title:"'탄소세 도입하면 물가 40% 폭등' 야당 주장",
+        body:"야당 A당의 국회의원 김○○은 기자회견에서 '정부가 추진 중인 탄소세를 도입하면 에너지 가격이 올라 물가가 최대 40% 폭등할 것'이라고 주장했습니다. 그러나 기획재정부가 공개한 연구 보고서에 따르면 실제 물가 영향은 0.8~2.3% 수준으로 예측됩니다. 해당 의원실은 40%의 근거가 된 연구를 공개하지 않았습니다.",
+        meta:"기자: 오민준 | JTBC뉴스 | 2024.11.10",real:false,
+        explanation:"정치인의 주장이 공식 연구 결과와 크게 다르고, 근거도 공개되지 않았어요. 정치적 목적이 있을 수 있어요.",
+        clues:[
+          {icon:"📰",name:"언론사 확인",evidence:"'JTBC뉴스'에서 보도했습니다.",choices:["✔️ 신뢰 매체","⚠️ 의심 매체","❌ 가짜 매체"],answer:0,feedback:"JTBC는 등록 언론사예요. 그러나 기사에서 전하는 주장 자체가 허위일 수 있어요."},
+          {icon:"✍️",name:"기자 이름",evidence:"'오민준 기자'로 실명이 있습니다.",choices:["✔️ 실명 기자 확인","⚠️ 활동명만 있음","❌ 기자 이름 없음"],answer:0,feedback:"기자는 있어요. 그런데 기자는 정치인의 말을 전달했을 뿐이에요."},
+          {icon:"📅",name:"날짜 확인",evidence:"2024.11.10으로 날짜가 있습니다.",choices:["✔️ 정확한 날짜 있음","⚠️ 연월만 표기","❌ 날짜 없음"],answer:0,feedback:"날짜는 정확해요."},
+          {icon:"🧾",name:"출처 추적",evidence:"정치인 주장이 출처이며, 기획재정부 공식 연구 결과와 정반대입니다.",choices:["✔️ 공식 기관 출처","⚠️ 개인 전문가","❌ 출처 불명"],answer:1,feedback:"정치인의 주장은 공식 출처가 아니에요. 특히 공식 연구와 다를 때 더 의심해야 해요."},
+          {icon:"📊",name:"근거 자료",evidence:"의원실이 40%의 근거가 된 연구를 공개하지 않았습니다.",choices:["✔️ 논문·통계 있음","⚠️ 후기·증언만 있음","❌ 근거 전혀 없음"],answer:2,feedback:"근거를 공개하지 않으면 주장을 확인할 방법이 없어요."},
+          {icon:"💰",name:"광고 의도",evidence:"직접 제품 판매는 없지만 탄소세 반대 여론 형성이 목적일 수 있습니다.",choices:["✔️ 광고 없음","⚠️ 간접 협찬","❌ 직접 구매 유도"],answer:1,feedback:"정치적 목적을 위해 사실을 왜곡하는 것도 가짜 정보예요."},
+          {icon:"😱",name:"감정 조작",evidence:"'물가 40% 폭등'이라는 표현이 사용됩니다.",choices:["✔️ 중립적 표현","⚠️ 다소 과장","❌ 강한 감정 조작"],answer:2,feedback:"실제 연구(0.8~2.3%)와 20배 이상 차이 나는 수치는 극단적인 과장이에요."}
+        ]
+      },
+      {
+        title:"UN 기후 보고서 '2030년까지 온실가스 43% 감축 필요'",
+        body:"유엔(UN) 산하 기후변화에 관한 정부간 협의체(IPCC)가 공개한 2024년 보고서에서 '2030년까지 2019년 대비 온실가스를 43% 줄여야 지구 평균 기온 상승을 1.5도 이내로 막을 수 있다'고 밝혔습니다. 보고서에는 193개국의 과학자 수천 명이 참여했으며, 보고서 전문은 IPCC 공식 홈페이지에서 확인할 수 있습니다.",
+        meta:"기자: 정하은 | 경향신문 | 2024.10.15",real:true,
+        explanation:"전 세계 수천 명의 과학자가 참여한 IPCC 공식 보고서를 기반으로 한 신뢰도 높은 국제 환경 기사예요.",
+        clues:[
+          {icon:"📰",name:"언론사 확인",evidence:"'경향신문'에서 보도했습니다.",choices:["✔️ 신뢰 매체","⚠️ 의심 매체","❌ 가짜 매체"],answer:0,feedback:"경향신문은 국내 주요 등록 언론사예요."},
+          {icon:"✍️",name:"기자 이름",evidence:"'정하은 기자'로 실명이 있습니다.",choices:["✔️ 실명 기자 확인","⚠️ 활동명만 있음","❌ 기자 이름 없음"],answer:0,feedback:"실명 기자 확인이에요."},
+          {icon:"📅",name:"날짜 확인",evidence:"2024.10.15로 정확한 날짜가 있습니다.",choices:["✔️ 정확한 날짜 있음","⚠️ 연월만 표기","❌ 날짜 없음"],answer:0,feedback:"정확한 날짜예요."},
+          {icon:"🧾",name:"출처 추적",evidence:"IPCC 공식 보고서를 출처로 하며, 홈페이지에서 직접 확인 가능합니다.",choices:["✔️ 공식 기관 출처","⚠️ 개인 전문가","❌ 출처 불명"],answer:0,feedback:"UN 산하 공식 기관의 보고서예요."},
+          {icon:"📊",name:"근거 자료",evidence:"193개국 수천 명 과학자가 참여했고, 원본 보고서를 직접 확인할 수 있습니다.",choices:["✔️ 논문·통계 있음","⚠️ 후기·증언만 있음","❌ 근거 전혀 없음"],answer:0,feedback:"규모가 크고 검증 가능한 과학 보고서예요."},
+          {icon:"💰",name:"광고 의도",evidence:"특정 제품 구매 유도가 없습니다.",choices:["✔️ 광고 없음","⚠️ 간접 협찬","❌ 직접 구매 유도"],answer:0,feedback:"광고 없는 국제 환경 정보 기사예요."},
+          {icon:"😱",name:"감정 조작",evidence:"과학적 수치를 그대로 전달합니다.",choices:["✔️ 중립적 표현","⚠️ 다소 과장","❌ 강한 감정 조작"],answer:0,feedback:"수치 중심의 중립적 기사예요."}
+        ]
+      },
+      {
+        title:"'대한민국 GDP 세계 10위권 진입' 정부 홍보 vs 전문가 '계산 방식 문제'",
+        body:"기획재정부는 보도자료에서 '2024년 한국의 GDP가 세계 12위를 기록하며 사실상 10위권에 근접했다'고 발표했습니다. 그러나 국제통화기금(IMF)이 사용하는 구매력 평가(PPP) 기준으로는 한국 GDP 순위가 15위로 나타납니다. 일부 경제학자들은 '명목 GDP 기준만 사용한 것은 정부의 홍보 목적이 있다'고 지적합니다.",
+        meta:"기자: 윤채린 | 한겨레신문 | 2024.11.25",real:false,
+        explanation:"정부 발표 자체는 거짓이 아니지만, 자신에게 유리한 기준만 선택한 것이에요. 어떤 기준을 쓰냐에 따라 결과가 달라질 수 있다는 점을 알아야 해요.",
+        clues:[
+          {icon:"📰",name:"언론사 확인",evidence:"'한겨레신문'에서 보도했습니다.",choices:["✔️ 신뢰 매체","⚠️ 의심 매체","❌ 가짜 매체"],answer:0,feedback:"한겨레는 등록 언론사예요. 그러나 정부 발표 자체에 문제가 있어요."},
+          {icon:"✍️",name:"기자 이름",evidence:"'윤채린 기자'로 실명이 있습니다.",choices:["✔️ 실명 기자 확인","⚠️ 활동명만 있음","❌ 기자 이름 없음"],answer:0,feedback:"기자 확인이에요."},
+          {icon:"📅",name:"날짜 확인",evidence:"2024.11.25로 날짜가 있습니다.",choices:["✔️ 정확한 날짜 있음","⚠️ 연월만 표기","❌ 날짜 없음"],answer:0,feedback:"날짜는 정확해요."},
+          {icon:"🧾",name:"출처 추적",evidence:"정부 보도자료와 IMF 기준이 다른 결과를 보여줍니다.",choices:["✔️ 공식 기관 출처","⚠️ 개인 전문가","❌ 출처 불명"],answer:1,feedback:"정부도 공식 기관이지만, IMF라는 다른 공식 기관이 다른 수치를 내놓고 있어요."},
+          {icon:"📊",name:"근거 자료",evidence:"명목 GDP 기준 12위이지만 PPP 기준으로는 15위입니다. 두 수치가 모두 있습니다.",choices:["✔️ 논문·통계 있음","⚠️ 후기·증언만 있음","❌ 근거 전혀 없음"],answer:1,feedback:"수치는 있지만, 어떤 기준을 쓰느냐에 따라 결과가 달라지는 복잡한 상황이에요."},
+          {icon:"💰",name:"광고 의도",evidence:"직접적인 광고는 없지만 정부 홍보 목적이 있다는 지적이 있습니다.",choices:["✔️ 광고 없음","⚠️ 간접 협찬","❌ 직접 구매 유도"],answer:1,feedback:"정치적 홍보 목적으로 유리한 수치를 선택하는 것도 정보 왜곡이에요."},
+          {icon:"😱",name:"감정 조작",evidence:"'사실상 10위권 근접'이라는 표현이 있습니다.",choices:["✔️ 중립적 표현","⚠️ 다소 과장","❌ 강한 감정 조작"],answer:1,feedback:"12위를 '사실상 10위권'으로 표현하는 건 다소 과장이에요."}
+        ]
+      },
+      {
+        title:"OECD, 한국 학생 수학·과학 성적 세계 최상위권 유지",
+        body:"경제협력개발기구(OECD)는 12월 3일 발표한 PISA 2024 보고서에서 한국 학생들의 수학 점수가 OECD 회원국 중 2위, 과학은 3위를 기록했다고 밝혔습니다. 보고서는 동시에 한국 학생들의 학교생활 만족도가 OECD 평균보다 낮다는 점도 함께 지적했습니다.",
+        meta:"기자: 신지연 | 동아일보 | 2024.12.03",real:true,
+        explanation:"OECD 공식 보고서를 근거로 긍정적 결과와 부정적 결과를 모두 균형 있게 전달한 신뢰할 수 있는 기사예요.",
+        clues:[
+          {icon:"📰",name:"언론사 확인",evidence:"'동아일보'에서 보도했습니다.",choices:["✔️ 신뢰 매체","⚠️ 의심 매체","❌ 가짜 매체"],answer:0,feedback:"동아일보는 국내 주요 등록 언론사예요."},
+          {icon:"✍️",name:"기자 이름",evidence:"'신지연 기자'로 실명이 있습니다.",choices:["✔️ 실명 기자 확인","⚠️ 활동명만 있음","❌ 기자 이름 없음"],answer:0,feedback:"실명 기자 확인이에요."},
+          {icon:"📅",name:"날짜 확인",evidence:"2024.12.03으로 정확한 날짜가 있습니다.",choices:["✔️ 정확한 날짜 있음","⚠️ 연월만 표기","❌ 날짜 없음"],answer:0,feedback:"정확한 날짜예요."},
+          {icon:"🧾",name:"출처 추적",evidence:"OECD 공식 PISA 보고서가 출처입니다.",choices:["✔️ 공식 기관 출처","⚠️ 개인 전문가","❌ 출처 불명"],answer:0,feedback:"OECD는 국제 공식 기관이에요."},
+          {icon:"📊",name:"근거 자료",evidence:"수학 2위, 과학 3위라는 구체적 순위가 나옵니다.",choices:["✔️ 논문·통계 있음","⚠️ 후기·증언만 있음","❌ 근거 전혀 없음"],answer:0,feedback:"공식 보고서의 구체적 수치예요."},
+          {icon:"💰",name:"광고 의도",evidence:"특정 제품 구매 유도가 없습니다.",choices:["✔️ 광고 없음","⚠️ 간접 협찬","❌ 직접 구매 유도"],answer:0,feedback:"광고 없는 국제 교육 정보 기사예요."},
+          {icon:"😱",name:"감정 조작",evidence:"좋은 점과 나쁜 점을 모두 균형 있게 전달합니다.",choices:["✔️ 중립적 표현","⚠️ 다소 과장","❌ 강한 감정 조작"],answer:0,feedback:"균형 잡힌 보도가 신뢰할 수 있는 기사의 특징이에요."}
+        ]
+      },
+      {
+        title:"'한국 인구 2100년에 1,500만 명으로 감소' 전망 확산",
+        body:"한 인구학 연구소가 발표한 시뮬레이션 자료에 따르면, 현재의 저출생 추세가 계속되면 2100년 한국 인구가 1,500만 명까지 줄어들 수 있다는 결과가 나왔습니다. 그러나 통계청의 공식 장기 인구 전망 보고서는 2100년 기준 2,700~3,200만 명을 예측하고 있습니다. 연구소는 자신들의 시뮬레이션에 쓴 변수를 공개했습니다.",
+        meta:"기자: 황민혁 | 서울신문 | 2024.11.05",real:false,
+        explanation:"연구소 시뮬레이션 결과와 통계청 공식 전망 사이에 큰 차이가 있어요. 특정 변수를 가정한 극단적 시나리오가 확실한 미래처럼 퍼지면 안 돼요.",
+        clues:[
+          {icon:"📰",name:"언론사 확인",evidence:"'서울신문'에서 보도했습니다.",choices:["✔️ 신뢰 매체","⚠️ 의심 매체","❌ 가짜 매체"],answer:0,feedback:"서울신문은 등록 언론사예요. 그러나 기사가 전하는 연구 내용이 편향될 수 있어요."},
+          {icon:"✍️",name:"기자 이름",evidence:"'황민혁 기자'로 실명이 있습니다.",choices:["✔️ 실명 기자 확인","⚠️ 활동명만 있음","❌ 기자 이름 없음"],answer:0,feedback:"기자 확인이에요."},
+          {icon:"📅",name:"날짜 확인",evidence:"2024.11.05로 날짜가 있습니다.",choices:["✔️ 정확한 날짜 있음","⚠️ 연월만 표기","❌ 날짜 없음"],answer:0,feedback:"날짜는 정확해요."},
+          {icon:"🧾",name:"출처 추적",evidence:"민간 연구소의 시뮬레이션이 출처이며, 통계청 공식 전망과 크게 다릅니다.",choices:["✔️ 공식 기관 출처","⚠️ 개인 전문가","❌ 출처 불명"],answer:1,feedback:"민간 연구소는 공식 통계 기관이 아니에요. 가정에 따라 결과가 크게 달라질 수 있어요."},
+          {icon:"📊",name:"근거 자료",evidence:"변수는 공개했지만 통계청 공식 전망(2,700~3,200만 명)과 크게 차이납니다.",choices:["✔️ 논문·통계 있음","⚠️ 후기·증언만 있음","❌ 근거 전혀 없음"],answer:1,feedback:"변수를 공개했다는 건 긍정적이지만, 공식 통계와 크게 다를 때는 더 꼼꼼히 봐야 해요."},
+          {icon:"💰",name:"광고 의도",evidence:"직접적인 광고는 없습니다.",choices:["✔️ 광고 없음","⚠️ 간접 협찬","❌ 직접 구매 유도"],answer:0,feedback:"광고 목적은 없어요. 그러나 연구 방향에 문제가 있을 수 있어요."},
+          {icon:"😱",name:"감정 조작",evidence:"'1,500만 명으로 감소'라는 극단적 수치로 충격을 줍니다.",choices:["✔️ 중립적 표현","⚠️ 다소 과장","❌ 강한 감정 조작"],answer:2,feedback:"극단적 시나리오를 마치 확실한 미래처럼 퍼뜨리는 것은 감정 조작이에요."}
+        ]
+      }
     ]
   }
 ];
 
-const RANKS=[{min:0,label:"🪪 인턴 수사관"},{min:3,label:"🕵️ 정식 탐정"},{min:7,label:"🧠 분석 전문가"},{min:15,label:"👑 팩트체크 마스터"}];
-function getRank(n){let r=RANKS[0];for(let x of RANKS)if(n>=x.min)r=x;return r;}
-function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+let G = {};
 
-let S={};
-
-function init(){
-  S={score:0,xp:0,ci:0,correct:0,clueTotal:0,clueCorrect:0,solved:0};
-  show('ss');
+function init() {
+  G = { stageIdx: 0, totalScore: 0, totalClueCorrect: 0, totalClueTotal: 0 };
+  renderStartScreen();
+  show('start-screen');
 }
 
-function startGame(){show('gs');loadCase();}
+function renderStartScreen() {
+  const wrap = document.getElementById('stages-preview');
+  wrap.innerHTML = '';
+  STAGES.forEach((s, i) => {
+    const locked = i > 0;
+    wrap.innerHTML += `<div class="stage-pill${locked?' locked':''}">
+      <div class="s-icon">${['🪪','🕵️','🧠','👑'][i]}</div>
+      <div class="s-name">${s.badge} ${s.title}</div>
+      <div class="s-desc">${['일상·건강','사회·환경','경제·과학','정치·국제'][i]}</div>
+    </div>`;
+  });
+}
 
-function loadCase(){
-  const c=CASES[S.ci];
-  document.getElementById('nTitle').textContent=c.title;
-  document.getElementById('nBody').textContent=c.body;
-  document.getElementById('nMeta').textContent=c.meta;
-  document.getElementById('hCase').textContent=S.ci+1;
-  document.getElementById('hTotal').textContent=CASES.length;
-  document.getElementById('hScore').textContent=S.score;
-  document.getElementById('hLv').textContent=getRank(S.solved).label;
-  document.getElementById('hAcc').textContent=S.clueTotal>0?Math.round(S.clueCorrect/S.clueTotal*100)+'%':'-';
-  document.getElementById('modalWrap').style.display='none';
-  document.getElementById('btnReal').disabled=true;
-  document.getElementById('btnFake').disabled=true;
-  S.doneClues=0;S.clueAnswers=new Array(7).fill(null);
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
 
-  const dots=document.getElementById('evDots');
-  dots.innerHTML='';
-  for(let i=0;i<7;i++){const d=document.createElement('div');d.className='dot';d.id='dot'+i;dots.appendChild(d);}
-  document.getElementById('evCnt').textContent='0/7';
-  document.getElementById('evHint').textContent='3개 이상 완료 후 판결 가능';
-  document.getElementById('evHint').classList.remove('ready');
+function showIntro(stageIdx) {
+  G.stageIdx = stageIdx;
+  const s = STAGES[stageIdx];
+  document.getElementById('intro-badge').textContent = s.badge + ' — ' + s.name;
+  document.getElementById('intro-title').textContent = s.title + ' 단계 시작';
+  document.getElementById('intro-desc').textContent = s.desc;
+  show('intro-screen');
+}
 
-  const list=document.getElementById('clueList');
-  list.innerHTML='';
-  c.clues.forEach((cl,i)=>{
-    const card=document.createElement('div');
-    card.className='clue-card';
-    card.id='clue-card-'+i;
-    const choicesHtml=cl.choices.map((ch,j)=>`<button class="choice-btn" onclick="pickClue(${i},${j})">${ch}</button>`).join('');
-    card.innerHTML=`<div class="clue-header"><div class="clue-icon">${cl.icon}</div><div class="clue-name">${cl.name}</div></div><div class="clue-evidence">${cl.evidence}</div><div class="choices" id="choices-${i}">${choicesHtml}</div><div class="clue-feedback" id="fb-${i}"></div>`;
+function startStage() {
+  const s = STAGES[G.stageIdx];
+  G.ci = 0;
+  G.stageScore = 0;
+  G.stageCorrect = 0;
+  G.stageClueCorrect = 0;
+  G.stageClueTotal = 0;
+  document.getElementById('g-stage-tag').textContent = s.badge + ' ' + s.name;
+  show('game-screen');
+  loadCase();
+}
+
+function loadCase() {
+  const s = STAGES[G.stageIdx];
+  const c = s.cases[G.ci];
+  document.getElementById('g-news-title').textContent = c.title;
+  document.getElementById('g-news-body').textContent = c.body;
+  document.getElementById('g-news-meta').textContent = c.meta;
+  document.getElementById('g-case-info').textContent = '사건 ' + (G.ci+1) + ' / ' + s.cases.length;
+  document.getElementById('g-score').textContent = G.stageScore;
+  document.getElementById('g-correct').textContent = G.stageCorrect + '/' + s.cases.length;
+  document.getElementById('g-clue-acc').textContent = G.stageClueTotal > 0 ? Math.round(G.stageClueCorrect/G.stageClueTotal*100)+'%' : '-';
+  document.getElementById('popup').classList.remove('open');
+  document.getElementById('btnReal').disabled = true;
+  document.getElementById('btnFake').disabled = true;
+  G.doneClues = 0;
+  G.clueAnswers = new Array(7).fill(null);
+  G.caseClueCrr = 0;
+
+  const dots = document.getElementById('ev-dots');
+  dots.innerHTML = '';
+  for (let i = 0; i < 7; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot'; d.id = 'dot' + i;
+    dots.appendChild(d);
+  }
+  document.getElementById('ev-cnt').textContent = '0/7';
+  document.getElementById('ev-hint').textContent = '3개 이상 완료 후 판결 가능';
+  document.getElementById('ev-hint').classList.remove('ready');
+
+  const list = document.getElementById('clue-list');
+  list.innerHTML = '';
+  c.clues.forEach((cl, i) => {
+    const card = document.createElement('div');
+    card.className = 'clue-card';
+    card.id = 'clue-card-' + i;
+    const choicesHtml = cl.choices.map((ch, j) => `<button class="choice" onclick="pickClue(${i},${j})">${ch}</button>`).join('');
+    card.innerHTML = `<div class="clue-top"><div class="clue-ico">${cl.icon}</div><div class="clue-name">${cl.name}</div></div><div class="clue-ev">${cl.evidence}</div><div class="choices" id="choices-${i}">${choicesHtml}</div><div class="clue-fb" id="fb-${i}"></div>`;
     list.appendChild(card);
   });
 }
 
-function pickClue(ci,chosen){
-  const c=CASES[S.ci];
-  const cl=c.clues[ci];
-  if(S.clueAnswers[ci]!==null)return;
-  S.clueAnswers[ci]=chosen;
-  const correct=chosen===cl.answer;
-  S.clueTotal++;
-  if(correct)S.clueCorrect++;
+function pickClue(ci, chosen) {
+  const c = STAGES[G.stageIdx].cases[G.ci];
+  const cl = c.clues[ci];
+  if (G.clueAnswers[ci] !== null) return;
+  G.clueAnswers[ci] = chosen;
+  const ok = chosen === cl.answer;
+  G.stageClueTotal++; G.totalClueTotal++;
+  if (ok) { G.stageClueCorrect++; G.totalClueCorrect++; G.caseClueCrr++; }
 
-  const choicesEl=document.getElementById('choices-'+ci);
-  Array.from(choicesEl.children).forEach((btn,j)=>{
-    btn.disabled=true;
-    if(j===chosen){
-      btn.classList.add(correct?'selected-correct':'selected-wrong');
-    }
-    if(j===cl.answer&&!correct){
-      btn.classList.add('reveal-correct');
-    }
+  const choicesEl = document.getElementById('choices-' + ci);
+  Array.from(choicesEl.children).forEach((btn, j) => {
+    btn.disabled = true;
+    if (j === chosen) btn.classList.add(ok ? 'c-ok' : 'c-no');
+    if (j === cl.answer && !ok) btn.classList.add('c-show');
   });
+  document.getElementById('clue-card-' + ci).classList.add('answered');
 
-  const fb=document.getElementById('fb-'+ci);
-  const tag=correct?`<span class="clue-status st-ok">✔ 정확한 분석!</span>`:`<span class="clue-status st-no">✗ 다시 생각해봐요</span>`;
-  fb.innerHTML=tag+cl.feedback;
-  fb.classList.add('show');
+  const fb = document.getElementById('fb-' + ci);
+  fb.textContent = (ok ? '✔ 정확한 분석! — ' : '✗ 아쉬워요. ') + cl.feedback;
+  fb.className = 'clue-fb show ' + (ok ? 'fb-ok' : 'fb-no');
 
-  S.doneClues++;
-  const dot=document.getElementById('dot'+( S.doneClues-1));
-  if(dot){dot.classList.add(correct?'ok':'no');}
-  document.getElementById('evCnt').textContent=S.doneClues+'/7';
-  document.getElementById('hAcc').textContent=Math.round(S.clueCorrect/S.clueTotal*100)+'%';
+  G.doneClues++;
+  const dot = document.getElementById('dot' + (G.doneClues - 1));
+  if (dot) dot.classList.add(ok ? 'd-ok' : 'd-no');
+  document.getElementById('ev-cnt').textContent = G.doneClues + '/7';
+  document.getElementById('g-clue-acc').textContent = Math.round(G.stageClueCorrect/G.stageClueTotal*100) + '%';
 
-  if(S.doneClues>=3){
-    document.getElementById('btnReal').disabled=false;
-    document.getElementById('btnFake').disabled=false;
-    document.getElementById('evHint').textContent='⚖️ 판결 준비 완료!';
-    document.getElementById('evHint').classList.add('ready');
+  if (G.doneClues >= 3) {
+    document.getElementById('btnReal').disabled = false;
+    document.getElementById('btnFake').disabled = false;
+    document.getElementById('ev-hint').textContent = '⚖️ 판결 준비 완료!';
+    document.getElementById('ev-hint').classList.add('ready');
   }
 }
 
-function verdict(isReal){
-  const c=CASES[S.ci];
-  const hit=isReal===c.real;
-  const clueBonus=S.clueCorrect;
-  const pts=hit?(80+clueBonus*10):0;
-  const xpGain=hit?50:10;
-  S.score+=pts;S.xp+=xpGain;
-  if(hit){S.correct++;S.solved++;}
+function verdict(isReal) {
+  const s = STAGES[G.stageIdx];
+  const c = s.cases[G.ci];
+  const hit = isReal === c.real;
+  const pts = hit ? (80 + G.caseClueCrr * 10) : 0;
+  G.stageScore += pts; G.totalScore += pts;
+  if (hit) { G.stageCorrect++; }
 
-  const prevRank=getRank(S.solved-(hit?1:0)).label;
-  const newRank=getRank(S.solved).label;
-  const lvup=hit&&prevRank!==newRank&&S.ci>0;
+  document.getElementById('pop-icon').textContent = hit ? '🎉' : '🚨';
+  document.getElementById('pop-title').textContent = hit ? '사건 해결 성공!' : '수사 실패!';
+  document.getElementById('pop-explain-text').textContent = c.explanation;
+  document.getElementById('pop-pts').textContent = '+' + pts;
+  document.getElementById('pop-xp').textContent = '+' + (hit ? 50 : 10);
+  document.getElementById('pop-clue').textContent = '단서 정답: ' + G.caseClueCrr + '/' + G.doneClues + '개 (보너스 +' + G.caseClueCrr*10 + '점 포함)';
+  document.getElementById('lvup-banner').style.display = 'none';
 
-  document.getElementById('resEmoji').textContent=hit?'🎉':'🚨';
-  document.getElementById('resTitle').textContent=hit?'사건 해결 성공!':'수사 실패!';
-  document.getElementById('resMsg').textContent=(hit?'잘 분석했어요!\n':'아쉽게 틀렸어요.\n')+c.explanation;
-  document.getElementById('clueScoreRow').textContent='단서 정답: '+S.clueCorrect+'/'+S.doneClues+'개 (보너스 점수 +'+S.clueCorrect*10+'점 포함)';
-  document.getElementById('resPts').textContent='+'+pts;
-  document.getElementById('resXp').textContent='+'+xpGain;
+  const nb = document.getElementById('pop-next-btn');
+  const isLast = G.ci + 1 >= s.cases.length;
+  nb.textContent = isLast ? '결과 확인하기 →' : '다음 사건 →';
+  nb.onclick = isLast ? showStageResult : () => { G.ci++; document.getElementById('popup').classList.remove('open'); loadCase(); };
 
-  const lv=document.getElementById('lvUp');
-  if(lvup){lv.textContent='🎊 레벨 업! '+newRank+' 로 승급!';lv.style.display='block';}
-  else lv.style.display='none';
-
-  const nb=document.getElementById('nextBtn');
-  if(S.ci+1>=CASES.length){nb.textContent='🏆 결과 보기';nb.onclick=showEnd;}
-  else{nb.textContent='다음 사건 →';nb.onclick=()=>{S.ci++;loadCase();};}
-
-  document.getElementById('modalWrap').style.display='block';
+  document.getElementById('popup').classList.add('open');
+  document.getElementById('popup').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-function showEnd(){
-  show('es');
-  const rank=getRank(S.solved);
-  document.getElementById('eTrophy').textContent=S.solved>=CASES.length*0.8?'🏆':S.solved>=CASES.length*0.5?'🥈':'🥉';
-  document.getElementById('eRank').textContent=rank.label;
-  document.getElementById('eSc').textContent=S.score;
-  document.getElementById('eCorr').textContent=S.correct+'/'+CASES.length;
-  document.getElementById('eAcc').textContent=Math.round(S.clueCorrect/S.clueTotal*100)+'%';
-  const bdgs=['모든 단서를 꼼꼼히 분석하는 진짜 수사관!','증거 기반 추리로 허위 정보를 잡아냈어요!','팩트체크 능력 +1 획득!'];
-  document.getElementById('eBdg').textContent='🏅 '+bdgs[Math.floor(Math.random()*bdgs.length)];
+function showStageResult() {
+  const s = STAGES[G.stageIdx];
+  document.getElementById('popup').classList.remove('open');
+  const passed = G.stageCorrect >= 3;
+  document.getElementById('sr-icon').textContent = passed ? '🏅' : '😓';
+  document.getElementById('sr-title').textContent = passed ? s.name + ' 클리어!' : '아직 부족해요!';
+  document.getElementById('sr-sub').textContent = s.badge + ' — ' + s.name;
+  document.getElementById('sr-score').textContent = G.stageScore;
+  document.getElementById('sr-correct').textContent = G.stageCorrect + '/5';
+  document.getElementById('sr-clue').textContent = Math.round(G.stageClueCorrect/G.stageClueTotal*100) + '%';
+
+  const msgEl = document.getElementById('sr-result-msg');
+  const btnsEl = document.getElementById('sr-btns');
+  btnsEl.innerHTML = '';
+
+  if (passed) {
+    msgEl.innerHTML = '<div class="pass-msg">🎊 5문제 중 ' + G.stageCorrect + '개 정답! 다음 스테이지로 진출할 수 있어요!</div>';
+    const isLast = G.stageIdx + 1 >= STAGES.length;
+    if (isLast) {
+      btnsEl.innerHTML = '<button class="sr-btn" onclick="showFinalEnd()">🏆 최종 결과 보기</button>';
+    } else {
+      const nextS = STAGES[G.stageIdx + 1];
+      btnsEl.innerHTML = '<button class="sr-btn" onclick="showIntro(' + (G.stageIdx+1) + ')">다음 스테이지: ' + nextS.name + ' →</button><br><button class="sr-btn btn-retry" onclick="retryStage()">이 스테이지 다시하기</button>';
+    }
+  } else {
+    msgEl.innerHTML = '<div class="fail-msg">⚠️ 5문제 중 ' + G.stageCorrect + '개 정답. 3개 이상 맞춰야 다음 스테이지로 갈 수 있어요. 다시 도전해 보세요!</div>';
+    btnsEl.innerHTML = '<button class="sr-btn" onclick="retryStage()">🔄 다시 도전하기</button>';
+  }
+  show('stage-result-screen');
 }
 
-document.getElementById('startBtn').onclick=startGame;
-document.getElementById('btnReal').onclick=()=>verdict(true);
-document.getElementById('btnFake').onclick=()=>verdict(false);
+function retryStage() {
+  G.totalScore -= G.stageScore;
+  G.totalClueCorrect -= G.stageClueCorrect;
+  G.totalClueTotal -= G.stageClueTotal;
+  showIntro(G.stageIdx);
+}
+
+function showFinalEnd() {
+  document.getElementById('end-rank').textContent = STAGES[G.stageIdx].name + ' 달성!';
+  document.getElementById('end-score').textContent = G.totalScore;
+  document.getElementById('end-clue-acc').textContent = Math.round(G.totalClueCorrect/G.totalClueTotal*100) + '%';
+  const badges = ['🏅 모든 단서를 꼼꼼히 분석하는 진짜 수사관!', '🏅 증거 기반 추리로 가짜 뉴스를 완벽 격파!', '🏅 미디어 리터러시 능력 만렙 달성!'];
+  document.getElementById('end-badge').textContent = badges[Math.floor(Math.random()*badges.length)];
+  show('end-screen');
+}
+
+document.getElementById('startBtn').onclick = () => showIntro(0);
+document.getElementById('introStartBtn').onclick = startStage;
+document.getElementById('btnReal').onclick = () => verdict(true);
+document.getElementById('btnFake').onclick = () => verdict(false);
+
 init();
 </script>
+</body>
+</html>
